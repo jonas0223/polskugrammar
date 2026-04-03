@@ -1,0 +1,27 @@
+kind = "mobile"
+previewPath = "/"
+title = "Polish Grammar Practice"
+version = "1.0.0"
+id = "artifacts/polish-grammar"
+router = "expo-domain"
+
+[[integratedSkills]]
+name = "expo"
+version = "1.0.0"
+
+[[services]]
+ensurePreviewReachable = "/status"
+name = "expo"
+paths = [ "/" ]
+localPort = 24061
+
+[services.development]
+run = "pnpm --filter @workspace/polish-grammar run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/polish-grammar", "run", "build" ]
+run = [ "pnpm", "--filter", "@workspace/polish-grammar", "run", "serve" ]
+
+[services.env]
+PORT = "24061"
+BASE_PATH = "/"
