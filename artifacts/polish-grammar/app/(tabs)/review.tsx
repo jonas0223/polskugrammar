@@ -176,7 +176,7 @@ export default function ReviewScreen() {
         Mistake Review — answer correctly to remove from queue
       </Text>
 
-      <ExerciseCard exercise={exercise} onAnswer={handleAnswer} />
+      <ExerciseCard key={exercise.id} exercise={exercise} onAnswer={handleAnswer} />
     </ScrollView>
   );
 }

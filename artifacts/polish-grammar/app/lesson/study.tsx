@@ -293,7 +293,7 @@ export default function StudyScreen() {
         </Text>
       </View>
 
-      <ExerciseCard exercise={exercise} onAnswer={handleAnswer} />
+      <ExerciseCard key={exercise.id} exercise={exercise} onAnswer={handleAnswer} />
     </ScrollView>
   );
 }
