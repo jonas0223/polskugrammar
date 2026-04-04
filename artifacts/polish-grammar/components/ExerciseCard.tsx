@@ -256,27 +256,42 @@ function FillBlank({ exercise, onAnswer }: ExerciseCardProps) {
 function Matching({ exercise, onAnswer }: ExerciseCardProps) {
   const colors = useColors();
   const pairs = exercise.pairs ?? [];
-  const [selectedLeft, setSelectedLeft] = useState<string | null>(null);
-  const [matched, setMatched] = useState<Record<string, string>>({});
+
+  // Shuffle the right column once on mount so it's a real matching challenge.
+  // Each item carries its original pair index so we can check correctness by index.
+  const [shuffledRights] = useState<{ value: string; pairIndex: number }[]>(() => {
+    const items = pairs.map((p, i) => ({ value: p.right, pairIndex: i }));
+    for (let i = items.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [items[i], items[j]] = [items[j], items[i]];
+    }
+    return items;
+  });
+
+  // Track everything by pair index — avoids all problems with duplicate string values.
+  const [selectedLeftIdx, setSelectedLeftIdx] = useState<number | null>(null);
+  // matched: leftPairIndex -> rightPairIndex
+  const [matched, setMatched] = useState<Record<number, number>>({});
   const [submitted, setSubmitted] = useState(false);
 
-  const rights = pairs.map((p) => p.right);
-
-  const handleLeftTap = (left: string) => {
-    if (submitted || matched[left]) return;
-    setSelectedLeft(left === selectedLeft ? null : left);
+  const handleLeftTap = (leftIdx: number) => {
+    if (submitted || matched[leftIdx] !== undefined) return;
+    setSelectedLeftIdx(leftIdx === selectedLeftIdx ? null : leftIdx);
   };
 
-  const handleRightTap = (right: string) => {
-    if (submitted || !selectedLeft) return;
-    if (Object.values(matched).includes(right)) return;
-    const newMatched = { ...matched, [selectedLeft]: right };
+  const handleRightTap = (pairIndex: number) => {
+    if (submitted || selectedLeftIdx === null) return;
+    // Block if this right slot is already used
+    if (Object.values(matched).includes(pairIndex)) return;
+
+    const newMatched = { ...matched, [selectedLeftIdx]: pairIndex };
     setMatched(newMatched);
-    setSelectedLeft(null);
+    setSelectedLeftIdx(null);
 
     if (Object.keys(newMatched).length === pairs.length) {
       setSubmitted(true);
-      const allCorrect = pairs.every((p) => newMatched[p.left] === p.right);
+      // Correct when each left index is matched to the same pair index
+      const allCorrect = pairs.every((_, i) => newMatched[i] === i);
       if (Platform.OS !== "web") {
         Haptics.impactAsync(
           allCorrect
@@ -288,26 +303,22 @@ function Matching({ exercise, onAnswer }: ExerciseCardProps) {
     }
   };
 
-  const isRightMatched = (right: string) =>
-    Object.values(matched).includes(right);
-
-  const isMatchCorrect = (left: string): boolean => {
+  const isMatchCorrect = (leftIdx: number): boolean => {
     if (!submitted) return false;
-    const correctRight = pairs.find((p) => p.left === left)?.right;
-    return matched[left] === correctRight;
+    return matched[leftIdx] === leftIdx;
   };
 
   return (
     <View style={styles.matchContainer}>
       <View style={styles.matchColumn}>
-        {pairs.map((p) => {
-          const isSelected = selectedLeft === p.left;
-          const isComplete = !!matched[p.left];
-          const correct = isMatchCorrect(p.left);
+        {pairs.map((p, i) => {
+          const isSelected = selectedLeftIdx === i;
+          const isComplete = matched[i] !== undefined;
+          const correct = isMatchCorrect(i);
           return (
             <Pressable
-              key={p.left}
-              onPress={() => handleLeftTap(p.left)}
+              key={i}
+              onPress={() => handleLeftTap(i)}
               style={[
                 styles.matchChip,
                 {
@@ -335,12 +346,7 @@ function Matching({ exercise, onAnswer }: ExerciseCardProps) {
               <Text
                 style={[
                   styles.matchChipText,
-                  {
-                    color: isSelected
-                      ? "#fff"
-                      : colors.foreground,
-                    fontSize: 13,
-                  },
+                  { color: isSelected ? "#fff" : colors.foreground, fontSize: 13 },
                 ]}
               >
                 {p.left}
@@ -351,25 +357,25 @@ function Matching({ exercise, onAnswer }: ExerciseCardProps) {
       </View>
 
       <View style={styles.matchColumn}>
-        {rights.map((right) => {
-          const isUsed = isRightMatched(right);
+        {shuffledRights.map((item, displayIdx) => {
+          const isUsed = Object.values(matched).includes(item.pairIndex);
           return (
             <Pressable
-              key={right}
-              onPress={() => handleRightTap(right)}
+              key={`r-${displayIdx}`}
+              onPress={() => handleRightTap(item.pairIndex)}
               style={[
                 styles.matchChip,
                 {
                   backgroundColor: isUsed ? colors.secondary : colors.card,
                   borderColor: isUsed ? colors.primary : colors.border,
-                  opacity: isUsed && !selectedLeft ? 0.7 : 1,
+                  opacity: isUsed && selectedLeftIdx === null ? 0.7 : 1,
                 },
               ]}
             >
               <Text
                 style={[styles.matchChipText, { color: colors.foreground, fontSize: 13 }]}
               >
-                {right}
+                {item.value}
               </Text>
             </Pressable>
           );
