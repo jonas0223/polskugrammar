@@ -240,7 +240,7 @@ export const MODULES: Module[] = [
           {
             id: "pt_mc2",
             type: "multiple_choice",
-            question: "How do you say 'We study'? (studniować → studiować)",
+            question: "How do you say 'We study'? (studiować = to study)",
             options: ["My studiuję.", "My studiujesz.", "My studiujemy.", "My studiują."],
             correctAnswer: "My studiujemy.",
             explanation: "For 'my' (we), the ending is '-emy' or '-imy' depending on the verb class.",
