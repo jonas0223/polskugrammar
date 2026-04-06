@@ -1,3 +1,16 @@
+import { personalPronounsExercises } from "./exercises/personal_pronouns";
+import { nounGenderExercises } from "./exercises/noun_gender";
+import { presentTenseExercises } from "./exercises/present_tense";
+import { nominativeCaseExercises } from "./exercises/nominative_case";
+import { accusativeCaseExercises } from "./exercises/accusative_case";
+import { negationExercises } from "./exercises/negation";
+import { questionsExercises } from "./exercises/questions";
+import { numbersExercises } from "./exercises/numbers";
+import { adjectiveAgreementExercises } from "./exercises/adjective_agreement";
+import { prepositionsExercises } from "./exercises/prepositions";
+import { pastTenseExercises } from "./exercises/past_tense";
+import { everydayPhrasesExercises } from "./exercises/everyday_phrases";
+
 export type ExerciseType =
   | "multiple_choice"
   | "fill_blank"
@@ -160,6 +173,7 @@ export const MODULES: Module[] = [
             correctAnswer: "a neuter noun or small child",
             explanation: "'Ono' refers to neuter-gender subjects (e.g., dziecko = child, miasto = city).",
           },
+          ...personalPronounsExercises,
         ],
       },
     ],
