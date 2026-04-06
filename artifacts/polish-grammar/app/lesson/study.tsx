@@ -1,6 +1,6 @@
 import { Feather } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import {
   Platform,
   Pressable,
@@ -18,6 +18,15 @@ import { getLessonById, getModuleById } from "@/data/modules";
 
 type Phase = "intro" | "exercises" | "complete";
 type StudyMode = "quick" | "refresh" | "exam";
+
+function shuffleArray<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
 const MODES: { key: StudyMode; label: string; icon: string; count: number; desc: string; color: string }[] = [
   { key: "quick",   label: "Quick",   icon: "zap",        count: 5,   desc: "5 questions",   color: "#16a34a" },
@@ -41,16 +50,18 @@ export default function StudyScreen() {
   const [phase, setPhase] = useState<Phase>("intro");
   const [mode, setMode] = useState<StudyMode>("quick");
   const [currentEx, setCurrentEx] = useState(0);
+  const [activeExercises, setActiveExercises] = useState(() => {
+    const all = lesson?.exercises ?? [];
+    const modeObj = MODES.find((m) => m.key === "quick")!;
+    return shuffleArray(all).slice(0, modeObj.count);
+  });
   const mistakesRef = useRef<string[]>([]);
   const correctCountRef = useRef(0);
 
-  const activeExercises = useMemo(() => {
-    const all = lesson?.exercises ?? [];
-    const modeObj = MODES.find((m) => m.key === mode)!;
-    return all.slice(0, modeObj.count);
-  }, [lesson, mode]);
-
   const startSession = (selectedMode: StudyMode) => {
+    const all = lesson?.exercises ?? [];
+    const modeObj = MODES.find((m) => m.key === selectedMode)!;
+    setActiveExercises(shuffleArray(all).slice(0, modeObj.count));
     setMode(selectedMode);
     setCurrentEx(0);
     mistakesRef.current = [];
