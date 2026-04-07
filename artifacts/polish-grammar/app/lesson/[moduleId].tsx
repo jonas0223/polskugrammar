@@ -1,6 +1,6 @@
 import { Feather } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import {
   Platform,
   Pressable,
@@ -14,7 +14,140 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
 import { useProgress } from "@/contexts/ProgressContext";
 import { getModuleById } from "@/data/modules";
+import { getLearningResource, LearningSection } from "@/data/learningResources";
 
+// ── Collapsible Grammar Note Section ─────────────────────────
+function NoteSection({
+  section,
+  moduleColor,
+}: {
+  section: LearningSection;
+  moduleColor: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const colors = useColors();
+
+  return (
+    <View style={[noteStyles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
+      <Pressable onPress={() => setOpen((p) => !p)} style={noteStyles.header}>
+        <Text style={[noteStyles.sectionTitle, { color: colors.foreground }]}>
+          {section.title}
+        </Text>
+        <Feather
+          name={open ? "chevron-up" : "chevron-down"}
+          size={18}
+          color={colors.mutedForeground}
+        />
+      </Pressable>
+
+      {open && (
+        <View style={noteStyles.body}>
+          <Text style={[noteStyles.bodyText, { color: colors.foreground }]}>
+            {section.body}
+          </Text>
+
+          {section.examples && section.examples.length > 0 && (
+            <View style={[noteStyles.examplesBox, { backgroundColor: moduleColor + "0d" }]}>
+              {section.examples.map((ex, i) => (
+                <View
+                  key={i}
+                  style={[
+                    noteStyles.exampleRow,
+                    i < section.examples!.length - 1 && {
+                      borderBottomWidth: 1,
+                      borderBottomColor: moduleColor + "22",
+                    },
+                  ]}
+                >
+                  <Text style={[noteStyles.polishEx, { color: moduleColor }]}>
+                    {ex.polish}
+                  </Text>
+                  <Text style={[noteStyles.englishEx, { color: colors.mutedForeground }]}>
+                    {ex.english}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          )}
+
+          {section.tip && (
+            <View style={[noteStyles.tipBox, { backgroundColor: colors.secondary, borderLeftColor: moduleColor }]}>
+              <Feather name="zap" size={13} color={moduleColor} />
+              <Text style={[noteStyles.tipText, { color: colors.foreground }]}>
+                {section.tip}
+              </Text>
+            </View>
+          )}
+        </View>
+      )}
+    </View>
+  );
+}
+
+const noteStyles = StyleSheet.create({
+  card: {
+    borderRadius: 14,
+    borderWidth: 1,
+    marginBottom: 8,
+    overflow: "hidden",
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 14,
+    gap: 10,
+  },
+  sectionTitle: {
+    flex: 1,
+    fontSize: 14,
+    fontFamily: "Inter_600SemiBold",
+  },
+  body: {
+    paddingHorizontal: 14,
+    paddingBottom: 14,
+    gap: 12,
+  },
+  bodyText: {
+    fontSize: 14,
+    fontFamily: "Inter_400Regular",
+    lineHeight: 22,
+  },
+  examplesBox: {
+    borderRadius: 10,
+    overflow: "hidden",
+  },
+  exampleRow: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    gap: 2,
+  },
+  polishEx: {
+    fontSize: 14,
+    fontFamily: "Inter_600SemiBold",
+  },
+  englishEx: {
+    fontSize: 12,
+    fontFamily: "Inter_400Regular",
+    fontStyle: "italic",
+  },
+  tipBox: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 8,
+    borderRadius: 10,
+    borderLeftWidth: 3,
+    padding: 12,
+  },
+  tipText: {
+    flex: 1,
+    fontSize: 13,
+    fontFamily: "Inter_400Regular",
+    lineHeight: 19,
+  },
+});
+
+// ── Main Screen ───────────────────────────────────────────────
 export default function ModuleLessonsScreen() {
   const { moduleId } = useLocalSearchParams<{ moduleId: string }>();
   const colors = useColors();
@@ -23,6 +156,7 @@ export default function ModuleLessonsScreen() {
   const { isLessonCompleted, getLessonProgress } = useProgress();
 
   const module = getModuleById(moduleId ?? "");
+  const resource = getLearningResource(moduleId ?? "");
 
   const topPadding =
     Platform.OS === "web" ? Math.max(insets.top, 67) : insets.top;
@@ -48,17 +182,12 @@ export default function ModuleLessonsScreen() {
       ]}
       showsVerticalScrollIndicator={false}
     >
-      <Pressable
-        onPress={() => router.back()}
-        style={styles.backBtn}
-      >
+      <Pressable onPress={() => router.back()} style={styles.backBtn}>
         <Feather name="arrow-left" size={20} color={colors.primary} />
         <Text style={[styles.backText, { color: colors.primary }]}>Back</Text>
       </Pressable>
 
-      <View
-        style={[styles.moduleHeader, { backgroundColor: module.color + "14" }]}
-      >
+      <View style={[styles.moduleHeader, { backgroundColor: module.color + "14" }]}>
         <View style={[styles.moduleIconBg, { backgroundColor: module.color }]}>
           <Feather name="book" size={28} color="#fff" />
         </View>
@@ -75,10 +204,37 @@ export default function ModuleLessonsScreen() {
         </View>
       </View>
 
-      <Text style={[styles.sectionLabel, { color: colors.mutedForeground }]}>
-        {module.lessons.length}{" "}
-        {module.lessons.length === 1 ? "LESSON" : "LESSONS"}
-      </Text>
+      {/* ── Grammar Notes ─────────────────────────────────── */}
+      {resource && resource.sections.length > 0 && (
+        <>
+          <View style={styles.sectionHeader}>
+            <Feather name="book-open" size={13} color={module.color} />
+            <Text style={[styles.sectionLabel, { color: colors.mutedForeground }]}>
+              GRAMMAR NOTES
+            </Text>
+          </View>
+
+          {resource.sections.map((sec, i) => (
+            <NoteSection key={i} section={sec} moduleColor={module.color} />
+          ))}
+
+          <View style={[styles.sourceBadge, { backgroundColor: colors.secondary }]}>
+            <Feather name="external-link" size={11} color={colors.mutedForeground} />
+            <Text style={[styles.sourceText, { color: colors.mutedForeground }]}>
+              Sourced & adapted from LingQ Polish Grammar Guide
+            </Text>
+          </View>
+        </>
+      )}
+
+      {/* ── Lessons ───────────────────────────────────────── */}
+      <View style={[styles.sectionHeader, { marginTop: resource ? 8 : 0 }]}>
+        <Feather name="play-circle" size={13} color={module.color} />
+        <Text style={[styles.sectionLabel, { color: colors.mutedForeground }]}>
+          {module.lessons.length}{" "}
+          {module.lessons.length === 1 ? "LESSON" : "LESSONS"}
+        </Text>
+      </View>
 
       {module.lessons.map((lesson, index) => {
         const completed = isLessonCompleted(module.id, lesson.id);
@@ -104,35 +260,22 @@ export default function ModuleLessonsScreen() {
             <View
               style={[
                 styles.lessonNumber,
-                {
-                  backgroundColor: completed
-                    ? module.color
-                    : colors.secondary,
-                },
+                { backgroundColor: completed ? module.color : colors.secondary },
               ]}
             >
               {completed ? (
                 <Feather name="check" size={14} color="#fff" />
               ) : (
-                <Text
-                  style={[
-                    styles.lessonNumberText,
-                    { color: colors.primary },
-                  ]}
-                >
+                <Text style={[styles.lessonNumberText, { color: colors.primary }]}>
                   {index + 1}
                 </Text>
               )}
             </View>
             <View style={styles.lessonContent}>
-              <Text
-                style={[styles.lessonTitle, { color: colors.foreground }]}
-              >
+              <Text style={[styles.lessonTitle, { color: colors.foreground }]}>
                 {lesson.title}
               </Text>
-              <Text
-                style={[styles.lessonInfo, { color: colors.mutedForeground }]}
-              >
+              <Text style={[styles.lessonInfo, { color: colors.mutedForeground }]}>
                 {lesson.exercises.length} exercises
                 {lessonProg?.accuracy !== undefined
                   ? ` · ${Math.round(lessonProg.accuracy * 100)}% accuracy`
@@ -154,25 +297,10 @@ export default function ModuleLessonsScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { paddingHorizontal: 20 },
-  center: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  errorText: {
-    fontSize: 16,
-    fontFamily: "Inter_500Medium",
-  },
-  backBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    marginBottom: 16,
-  },
-  backText: {
-    fontSize: 15,
-    fontFamily: "Inter_600SemiBold",
-  },
+  center: { flex: 1, alignItems: "center", justifyContent: "center" },
+  errorText: { fontSize: 16, fontFamily: "Inter_500Medium" },
+  backBtn: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 16 },
+  backText: { fontSize: 15, fontFamily: "Inter_600SemiBold" },
   moduleHeader: {
     borderRadius: 20,
     padding: 24,
@@ -192,31 +320,34 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 6,
   },
-  moduleTitle: {
-    fontSize: 22,
-    fontFamily: "Inter_700Bold",
-    textAlign: "center",
-  },
-  moduleSub: {
-    fontSize: 14,
-    fontFamily: "Inter_400Regular",
-    textAlign: "center",
-  },
-  levelBadge: {
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-  },
-  levelText: {
-    fontSize: 12,
-    fontFamily: "Inter_700Bold",
+  moduleTitle: { fontSize: 22, fontFamily: "Inter_700Bold", textAlign: "center" },
+  moduleSub: { fontSize: 14, fontFamily: "Inter_400Regular", textAlign: "center" },
+  levelBadge: { borderRadius: 8, paddingHorizontal: 12, paddingVertical: 4 },
+  levelText: { fontSize: 12, fontFamily: "Inter_700Bold" },
+  sectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginBottom: 10,
+    marginTop: 4,
   },
   sectionLabel: {
     fontSize: 11,
     fontFamily: "Inter_700Bold",
     letterSpacing: 1,
-    marginBottom: 10,
   },
+  sourceBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    alignSelf: "flex-start",
+    marginBottom: 20,
+    marginTop: 4,
+  },
+  sourceText: { fontSize: 11, fontFamily: "Inter_400Regular" },
   lessonCard: {
     flexDirection: "row",
     alignItems: "center",
@@ -225,7 +356,6 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     padding: 16,
     marginBottom: 10,
-    backgroundColor: "#fff",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.04,
@@ -239,20 +369,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  lessonNumberText: {
-    fontSize: 15,
-    fontFamily: "Inter_700Bold",
-  },
-  lessonContent: {
-    flex: 1,
-    gap: 3,
-  },
-  lessonTitle: {
-    fontSize: 15,
-    fontFamily: "Inter_600SemiBold",
-  },
-  lessonInfo: {
-    fontSize: 12,
-    fontFamily: "Inter_400Regular",
-  },
+  lessonNumberText: { fontSize: 15, fontFamily: "Inter_700Bold" },
+  lessonContent: { flex: 1, gap: 3 },
+  lessonTitle: { fontSize: 15, fontFamily: "Inter_600SemiBold" },
+  lessonInfo: { fontSize: 12, fontFamily: "Inter_400Regular" },
 });
