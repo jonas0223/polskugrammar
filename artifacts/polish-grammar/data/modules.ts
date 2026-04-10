@@ -3,6 +3,7 @@ import { nounGenderExercises } from "./exercises/noun_gender";
 import { presentTenseExercises } from "./exercises/present_tense";
 import { nominativeCaseExercises } from "./exercises/nominative_case";
 import { accusativeCaseExercises } from "./exercises/accusative_case";
+import { caseUsageExercises } from "./exercises/case_usage";
 import { negationExercises } from "./exercises/negation";
 import { questionsExercises } from "./exercises/questions";
 import { numbersExercises } from "./exercises/numbers";
@@ -498,6 +499,24 @@ export const MODULES: Module[] = [
           ...nominativeCaseExercises,
         ],
       },
+      {
+        id: "nom_case_usage",
+        title: "When to Apply Each Case",
+        explanation:
+          "Polish has 7 cases — each noun ending tells you WHY the noun is there. This lesson trains your instinct for choosing the right case: nominative for subjects, accusative for direct objects, genitive after negation and 'do', dative for recipients, instrumental for tools and professions, and locative after location prepositions.",
+        examples: [
+          { polish: "Pies śpi. (nom.) — subject of the sentence", english: "The dog sleeps." },
+          { polish: "Lubię kawę. (acc.) — direct object", english: "I like coffee." },
+          { polish: "Nie mam czasu. (gen.) — after negation", english: "I don't have time." },
+          { polish: "Idę do sklepu. (gen.) — after 'do'", english: "I'm going to the shop." },
+          { polish: "Daję mamie prezent. (dat.) — recipient", english: "I give mum a gift." },
+          { polish: "Jestem nauczycielem. (instr.) — profession", english: "I am a teacher." },
+          { polish: "Mieszkam w Warszawie. (loc.) — location", english: "I live in Warsaw." },
+        ],
+        exercises: [
+          ...caseUsageExercises,
+        ],
+      },
     ],
   },
 
@@ -593,6 +612,23 @@ export const MODULES: Module[] = [
             explanation: "'Mieć' (to have) takes a direct object in accusative: Mam brata. (I have a brother.)",
           },
           ...accusativeCaseExercises,
+        ],
+      },
+      {
+        id: "acc_case_usage",
+        title: "Case Selection in Practice",
+        explanation:
+          "The accusative is just one of 7 cases — and which case you pick depends on WHY the noun is in the sentence. This lesson drills case selection: knowing when to use accusative vs. genitive (after negation), when prepositions switch the case, and how to recognise the right case trigger from context.",
+        examples: [
+          { polish: "Positive verb → accusative: Lubię kawę.", english: "I like coffee." },
+          { polish: "Negative verb → genitive: Nie lubię kawy.", english: "I don't like coffee." },
+          { polish: "'do' always → genitive: Idę do sklepu.", english: "I'm going to the shop." },
+          { polish: "'na' + movement → accusative: Idę na plażę.", english: "I'm going to the beach." },
+          { polish: "'na' + location → locative: Jestem na plaży.", english: "I'm at the beach." },
+          { polish: "'być' + profession → instrumental: Jestem lekarką.", english: "I am a doctor (f.)." },
+        ],
+        exercises: [
+          ...caseUsageExercises,
         ],
       },
     ],

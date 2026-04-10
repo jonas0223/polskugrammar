@@ -173,6 +173,33 @@ export const LEARNING_RESOURCES: LearningResource[] = [
     moduleId: "noun_cases_nom",
     sections: [
       {
+        title: "All 7 Polish Cases: Quick Reference",
+        body: "Polish nouns change their ending depending on their grammatical role. There are 7 cases in total. Think of each case as answering a different question about the noun.",
+        examples: [
+          { polish: "Mianownik (Nominative) — kto? co?", english: "Subject of the sentence. 'Pies śpi.' (The dog sleeps.)" },
+          { polish: "Dopełniacz (Genitive) — kogo? czego?", english: "Possession, after negation, after certain verbs/prepositions. 'Nie mam czasu.' (I have no time.)" },
+          { polish: "Celownik (Dative) — komu? czemu?", english: "Indirect object — the recipient. 'Daję mamie prezent.' (I give mom a gift.)" },
+          { polish: "Biernik (Accusative) — kogo? co?", english: "Direct object of transitive verbs. 'Lubię kawę.' (I like coffee.)" },
+          { polish: "Narzędnik (Instrumental) — kim? czym?", english: "Tool, companion, profession after 'być'. 'Jestem nauczycielem.' (I am a teacher.)" },
+          { polish: "Miejscownik (Locative) — o kim? o czym?", english: "Always after a preposition: w, na, o, przy, po. 'Mieszkam w Warszawie.'" },
+          { polish: "Wołacz (Vocative) — direct address", english: "Calling or addressing someone. 'Mamo!' / 'Panie Kowalski!'" },
+        ],
+        tip: "You only need 6 cases actively in everyday speech — the vocative appears mainly in greetings and exclamations.",
+      },
+      {
+        title: "When to Use Nominative: All Contexts",
+        body: "The nominative has three specific uses. Master these three and you will always know when to use the base (dictionary) form of a noun.",
+        examples: [
+          { polish: "1. Subject of any sentence", english: "The noun doing the action is always nominative." },
+          { polish: "Pies biega. Kobieta czyta. Studenci śpią.", english: "The dog runs. The woman reads. The students sleep." },
+          { polish: "2. After 'to jest' (this is / that is)", english: "The noun after 'to jest' stays in nominative — it names what something IS." },
+          { polish: "To jest dom. To jest moja nauczycielka.", english: "This is a house. This is my teacher." },
+          { polish: "3. Predicate with 'być' for nouns used as descriptions", english: "Short equational sentences where subject and predicate are the same thing." },
+          { polish: "Ona jest lekarką. — Ona is subject (nom.), lekarką is predicate (instrumental).", english: "Note: professions after 'być' use INSTRUMENTAL, not nominative!" },
+        ],
+        tip: "The most common mistake: using nominative after 'być' for professions. 'Jestem nauczyciel' is WRONG — it should be 'Jestem nauczycielem' (instrumental).",
+      },
+      {
         title: "What is the Nominative Case?",
         body: "Polish has 7 grammatical cases — different noun endings that show the noun's role in a sentence. The nominative (mianownik) is the base form: the dictionary form. It answers the question 'kto?' (who?) or 'co?' (what?) and marks the subject of the sentence.",
         examples: [
@@ -213,6 +240,64 @@ export const LEARNING_RESOURCES: LearningResource[] = [
   {
     moduleId: "noun_cases_acc",
     sections: [
+      {
+        title: "When to Use Accusative: Verb Triggers",
+        body: "The accusative is the case of the direct object — the thing directly receiving the action. Memorize these high-frequency verbs: they always take an accusative object in positive sentences.",
+        examples: [
+          { polish: "mieć — Mam samochód / brata / kawę.", english: "to have" },
+          { polish: "lubić — Lubię muzykę / psy / sport.", english: "to like" },
+          { polish: "kochać — Kocham Polskę / mojego psa.", english: "to love" },
+          { polish: "widzieć — Widzę kota / kobietę / dom.", english: "to see" },
+          { polish: "czytać — Czytam gazetę / książkę.", english: "to read" },
+          { polish: "pisać — Piszę list / e-mail.", english: "to write" },
+          { polish: "jeść — Jem zupę / chleb / sałatkę.", english: "to eat" },
+          { polish: "pić — Piję kawę / wodę / herbatę.", english: "to drink" },
+          { polish: "znać — Znam Annę / to słowo.", english: "to know (a person/thing)" },
+          { polish: "rozumieć — Rozumiem polskie słowa.", english: "to understand" },
+          { polish: "kupić/kupować — Kupuję bilety / chleb.", english: "to buy" },
+          { polish: "woleć — Wolę herbatę od kawy.", english: "to prefer" },
+        ],
+        tip: "If you can ask 'I [verb] WHAT/WHOM?' and there's a direct answer, the answer is in the accusative.",
+      },
+      {
+        title: "When to Use Accusative: Preposition Triggers",
+        body: "Several common prepositions trigger the accusative, especially with verbs of movement or waiting.",
+        examples: [
+          { polish: "na + acc. (movement onto/to): Idę na plażę / na zakupy / na koncert.", english: "going to the beach / shopping / a concert" },
+          { polish: "w + acc. (movement into): Wchodzę w las.", english: "I walk into the forest (movement → acc.; location → locative)" },
+          { polish: "przez + acc. (through / because of): Idę przez park. Przez ciebie spóźniłem się.", english: "I walk through the park. Because of you I was late." },
+          { polish: "za + acc. (for a price / expressing time duration): Kupiłem to za złotówkę. Poczekaj za chwilę.", english: "I bought it for a złoty. Wait a moment." },
+          { polish: "czekać na + acc. (to wait for): Czekam na autobus / na Annę.", english: "I'm waiting for the bus / for Anna." },
+          { polish: "patrzeć na + acc. (to look at): Patrzę na obraz.", english: "I'm looking at the painting." },
+        ],
+        tip: "Key contrast: 'na + locative' = location (Jestem na plaży — I'm at the beach), 'na + accusative' = movement/destination (Idę na plażę — I'm going to the beach).",
+      },
+      {
+        title: "The Negation Rule: Accusative → Genitive",
+        body: "This is the most critical case-selection rule in Polish. Whenever you negate a transitive verb, the accusative object automatically shifts to the genitive case. This applies to ALL nouns and pronouns.",
+        examples: [
+          { polish: "Mam czas. → Nie mam czasu.", english: "I have time. → I don't have time. (czas → czasu)" },
+          { polish: "Lubię kawę. → Nie lubię kawy.", english: "I like coffee. → I don't like coffee. (kawę → kawy)" },
+          { polish: "Mam brata. → Nie mam brata.", english: "I have a brother. → I don't have a brother. (brata looks same — animate masc. gen. = acc.)" },
+          { polish: "Widzę psa. → Nie widzę psa.", english: "I see the dog. → I don't see the dog. (psa — same form, but grammatically genitive)" },
+          { polish: "Czytam gazetę. → Nie czytam gazety.", english: "I read the newspaper. → I don't read the newspaper. (gazetę → gazety)" },
+        ],
+        tip: "The accusative → genitive shift after negation is automatic and obligatory — there are no exceptions. It also applies to pronouns: 'Widzę go.' → 'Nie widzę go.' (go is actually already genitive form).",
+      },
+      {
+        title: "Quick Decision Tree: Which Case?",
+        body: "Use this mental checklist when forming a sentence — it covers the most common case decisions at the A1–A2 level.",
+        examples: [
+          { polish: "Is it the subject (doing the action)?", english: "→ Nominative" },
+          { polish: "Is it a direct object with a POSITIVE verb?", english: "→ Accusative" },
+          { polish: "Is it a direct object with a NEGATIVE verb?", english: "→ Genitive" },
+          { polish: "Is it after 'do', 'z', 'bez', 'dla', 'szukać', 'potrzebować'?", english: "→ Genitive" },
+          { polish: "Is it the recipient of giving/showing/telling?", english: "→ Dative" },
+          { polish: "Is it a profession/tool after 'być' or 'z'?", english: "→ Instrumental" },
+          { polish: "Is it after 'w' (location), 'na' (location), 'o', 'przy', 'po'?", english: "→ Locative" },
+        ],
+        tip: "Print this checklist and keep it visible while practising. With time, correct case selection becomes automatic — but the checklist is invaluable during the learning phase.",
+      },
       {
         title: "What is the Accusative Case?",
         body: "The accusative (biernik) marks the direct object — the thing or person that directly receives the action. It answers 'kogo?' (whom?) or 'co?' (what?). It is the most common case after the nominative.",

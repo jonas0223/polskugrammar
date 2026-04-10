@@ -1,0 +1,183 @@
+import { Exercise } from "../modules";
+
+export const caseUsageExercises: Exercise[] = [
+
+  // ── MULTIPLE CHOICE (35) ────────────────────────────────────
+
+  { id: "cu_mc_001", type: "multiple_choice", question: "Which case is used for the subject of a sentence?", options: ["Nominative", "Accusative", "Genitive", "Dative"], correctAnswer: "Nominative", explanation: "The subject — the noun doing the action — always uses the nominative case. 'Pies śpi.' — pies is nominative." },
+  { id: "cu_mc_002", type: "multiple_choice", question: "Which case does the verb 'lubić' (to like) require?", options: ["Nominative", "Genitive", "Accusative", "Dative"], correctAnswer: "Accusative", explanation: "Transitive verbs like lubić take the accusative direct object: 'Lubię kawę.'" },
+  { id: "cu_mc_003", type: "multiple_choice", question: "Which case does 'mieć' (to have) require?", options: ["Nominative", "Dative", "Accusative", "Instrumental"], correctAnswer: "Accusative", explanation: "'Mam brata / samochód / kawę' — mieć always takes an accusative object." },
+  { id: "cu_mc_004", type: "multiple_choice", question: "After negation ('nie mam'), the object shifts from accusative to which case?", options: ["Dative", "Genitive", "Instrumental", "Locative"], correctAnswer: "Genitive", explanation: "Negation triggers the genitive: 'Mam czas → Nie mam czasu.' The accusative becomes genitive." },
+  { id: "cu_mc_005", type: "multiple_choice", question: "The preposition 'do' (to/into) requires which case?", options: ["Accusative", "Locative", "Genitive", "Instrumental"], correctAnswer: "Genitive", explanation: "'Do' always takes the genitive: 'do sklepu', 'do szkoły', 'do domu'." },
+  { id: "cu_mc_006", type: "multiple_choice", question: "The preposition 'w' meaning location (in) requires which case?", options: ["Accusative", "Locative", "Genitive", "Instrumental"], correctAnswer: "Locative", explanation: "'W' expressing location takes the locative: 'w domu', 'w szkole', 'w Polsce'." },
+  { id: "cu_mc_007", type: "multiple_choice", question: "The preposition 'na' used with movement verbs (going onto/to) requires which case?", options: ["Locative", "Genitive", "Dative", "Accusative"], correctAnswer: "Accusative", explanation: "With movement, 'na' takes accusative: 'Idę na zakupy / na plażę'. For location it takes locative." },
+  { id: "cu_mc_008", type: "multiple_choice", question: "Which case follows 'z' meaning 'from'?", options: ["Accusative", "Instrumental", "Genitive", "Locative"], correctAnswer: "Genitive", explanation: "'Z' meaning 'from' takes genitive: 'z Polski', 'z Warszawy', 'z domu'." },
+  { id: "cu_mc_009", type: "multiple_choice", question: "After 'być' (to be) with a profession, which case is used?", options: ["Nominative", "Accusative", "Dative", "Instrumental"], correctAnswer: "Instrumental", explanation: "Professions after 'być': 'Jestem nauczycielem / lekarką / studentem' — instrumental case." },
+  { id: "cu_mc_010", type: "multiple_choice", question: "Which case is used for the indirect object — the person receiving something?", options: ["Accusative", "Instrumental", "Dative", "Genitive"], correctAnswer: "Dative", explanation: "The dative (celownik) marks the indirect object: 'Daję mamie prezent.' — mamie is dative." },
+  { id: "cu_mc_011", type: "multiple_choice", question: "The preposition 'przy' (near/by) requires which case?", options: ["Accusative", "Genitive", "Instrumental", "Locative"], correctAnswer: "Locative", explanation: "'Przy' exclusively takes the locative: 'przy oknie', 'przy stole', 'przy szkole'." },
+  { id: "cu_mc_012", type: "multiple_choice", question: "Which case does 'dla' (for) require?", options: ["Dative", "Genitive", "Accusative", "Instrumental"], correctAnswer: "Genitive", explanation: "'Dla' takes genitive: 'To jest dla ciebie / dla mamy / dla dzieci.'" },
+  { id: "cu_mc_013", type: "multiple_choice", question: "'Czekam na autobus.' — what case is 'autobus' in?", options: ["Nominative", "Locative", "Genitive", "Accusative"], correctAnswer: "Accusative", explanation: "'Czekać na' takes accusative: 'czekam na autobus', 'czekam na Annę'." },
+  { id: "cu_mc_014", type: "multiple_choice", question: "After 'to jest' (this is), the following noun is in which case?", options: ["Accusative", "Instrumental", "Nominative", "Genitive"], correctAnswer: "Nominative", explanation: "'To jest dom / nauczyciel / kawa' — the noun after 'to jest' is in nominative." },
+  { id: "cu_mc_015", type: "multiple_choice", question: "Which case follows 'szukać' (to look for)?", options: ["Accusative", "Genitive", "Dative", "Instrumental"], correctAnswer: "Genitive", explanation: "'Szukać' takes the genitive: 'Szukam klucza / pracy / przyjaciela.'" },
+  { id: "cu_mc_016", type: "multiple_choice", question: "Which case follows 'przez' (through / because of)?", options: ["Genitive", "Locative", "Dative", "Accusative"], correctAnswer: "Accusative", explanation: "'Przez' takes accusative: 'przez park', 'przez całą noc', 'przez ciebie'." },
+  { id: "cu_mc_017", type: "multiple_choice", question: "'Mówię o Polsce.' — what case is 'Polsce' in?", options: ["Dative", "Accusative", "Locative", "Genitive"], correctAnswer: "Locative", explanation: "'Mówić o' takes the locative: 'o Polsce', 'o szkole', 'o tym'." },
+  { id: "cu_mc_018", type: "multiple_choice", question: "Which case follows 'potrzebować' (to need)?", options: ["Accusative", "Dative", "Genitive", "Nominative"], correctAnswer: "Genitive", explanation: "'Potrzebować' takes genitive: 'Potrzebuję pomocy / czasu / pieniędzy.'" },
+  { id: "cu_mc_019", type: "multiple_choice", question: "'Interesuję się sportem.' — what case is 'sportem' in?", options: ["Locative", "Accusative", "Dative", "Instrumental"], correctAnswer: "Instrumental", explanation: "'Interesować się' takes instrumental: 'interesuję się sportem / muzyką / językami'." },
+  { id: "cu_mc_020", type: "multiple_choice", question: "Which case follows 'bez' (without)?", options: ["Accusative", "Dative", "Genitive", "Instrumental"], correctAnswer: "Genitive", explanation: "'Bez' always takes genitive: 'bez ciebie', 'bez pieniędzy', 'bez pracy'." },
+  { id: "cu_mc_021", type: "multiple_choice", question: "In 'Piszę długopisem', what case is 'długopisem' in?", options: ["Accusative", "Locative", "Genitive", "Instrumental"], correctAnswer: "Instrumental", explanation: "The instrument used for an action takes the instrumental case: 'piszę długopisem', 'jem łyżką'." },
+  { id: "cu_mc_022", type: "multiple_choice", question: "The preposition 'nad' (above/over) takes which case?", options: ["Genitive", "Accusative", "Locative", "Instrumental"], correctAnswer: "Instrumental", explanation: "'Nad' takes instrumental: 'nad morzem', 'nad rzeką', 'nad głową'." },
+  { id: "cu_mc_023", type: "multiple_choice", question: "Which case marks the noun after 'widzieć' (to see)?", options: ["Nominative", "Genitive", "Accusative", "Dative"], correctAnswer: "Accusative", explanation: "'Widzieć' is a transitive verb: 'Widzę psa / kobietę / dom' — accusative." },
+  { id: "cu_mc_024", type: "multiple_choice", question: "In 'Boję się psa', what case is 'psa' in?", options: ["Accusative", "Genitive", "Dative", "Instrumental"], correctAnswer: "Genitive", explanation: "'Bać się' (to be afraid of) takes the genitive: 'boję się psa', 'boję się ciemności'." },
+  { id: "cu_mc_025", type: "multiple_choice", question: "Which case is used after 'mieszkać w' (to live in)?", options: ["Accusative", "Genitive", "Instrumental", "Locative"], correctAnswer: "Locative", explanation: "'Mieszkać w' takes locative: 'mieszkam w Warszawie', 'w Polsce', 'w dużym mieście'." },
+  { id: "cu_mc_026", type: "multiple_choice", question: "Which case follows 'kupić' (to buy)?", options: ["Genitive", "Dative", "Nominative", "Accusative"], correctAnswer: "Accusative", explanation: "'Kupić' is transitive: 'Kupuję chleb / samochód / bilet' — accusative." },
+  { id: "cu_mc_027", type: "multiple_choice", question: "'Daję ci prezent.' — what case is 'ci' (you) in?", options: ["Accusative", "Nominative", "Dative", "Instrumental"], correctAnswer: "Dative", explanation: "'Ci' is the dative form of 'ty'. 'Dać komuś coś' — the recipient takes the dative." },
+  { id: "cu_mc_028", type: "multiple_choice", question: "Which case is used after 'przed' (in front of / before)?", options: ["Genitive", "Accusative", "Locative", "Instrumental"], correctAnswer: "Instrumental", explanation: "'Przed' takes instrumental: 'przed domem', 'przed szkołą', 'przed tobą'." },
+  { id: "cu_mc_029", type: "multiple_choice", question: "Which case does the verb 'jeść' (to eat) require for its object?", options: ["Genitive", "Nominative", "Dative", "Accusative"], correctAnswer: "Accusative", explanation: "'Jem zupę / chleb / sałatkę' — the food being eaten is in the accusative." },
+  { id: "cu_mc_030", type: "multiple_choice", question: "Which case follows 'po' meaning 'around' or 'all over'?", options: ["Accusative", "Genitive", "Instrumental", "Locative"], correctAnswer: "Locative", explanation: "'Po' meaning 'around / all over' takes locative: 'po mieście', 'po Polsce', 'po parku'." },
+  { id: "cu_mc_031", type: "multiple_choice", question: "In 'Wracam ze szkoły', what case is 'szkoły' in?", options: ["Accusative", "Genitive", "Locative", "Dative"], correctAnswer: "Genitive", explanation: "'Ze' is a variant of 'z' (from) and takes genitive: 'ze szkoły', 'ze sklepu', 'ze stacji'." },
+  { id: "cu_mc_032", type: "multiple_choice", question: "Which case follows 'zostać' (to become)?", options: ["Nominative", "Accusative", "Genitive", "Instrumental"], correctAnswer: "Instrumental", explanation: "'Zostać' + profession/role takes instrumental: 'Zostanę lekarzem / nauczycielką.'" },
+  { id: "cu_mc_033", type: "multiple_choice", question: "Which case is used for the predicate noun after 'to jest' when describing what something IS?", options: ["Accusative", "Instrumental", "Nominative", "Genitive"], correctAnswer: "Nominative", explanation: "'To jest kot / Polska / dobry pomysł' — the predicate noun after 'to jest' stays nominative." },
+  { id: "cu_mc_034", type: "multiple_choice", question: "Which case does 'rozumieć' (to understand) require?", options: ["Dative", "Genitive", "Locative", "Accusative"], correctAnswer: "Accusative", explanation: "'Rozumieć' is transitive: 'Rozumiem cię / to pytanie / po polsku' — accusative." },
+  { id: "cu_mc_035", type: "multiple_choice", question: "'Nie mam samochodu.' — the negation changed 'samochód' from accusative into which case?", options: ["Dative", "Instrumental", "Locative", "Genitive"], correctAnswer: "Genitive", explanation: "Accusative objects become genitive after negation. 'Mam samochód' → 'Nie mam samochodu'." },
+
+  // ── FILL IN THE BLANK (18) ────────────────────────────────────
+
+  { id: "cu_fb_001", type: "fill_blank", question: "Fill in the accusative form of 'brat' (brother):", sentence: "Mam ___.", blanks: ["brata"], explanation: "Animate masculine nouns take -a in accusative: brat → brata. 'Mam brata.' = I have a brother." },
+  { id: "cu_fb_002", type: "fill_blank", question: "Fill in the genitive after negation — 'czas' (time):", sentence: "Nie mam ___.", blanks: ["czasu"], explanation: "After 'nie mam', the accusative shifts to genitive: czas → czasu." },
+  { id: "cu_fb_003", type: "fill_blank", question: "Fill in the genitive after 'do' — 'sklep' (shop):", sentence: "Idę do ___.", blanks: ["sklepu"], explanation: "'Do' + genitive. Masculine inanimate: sklep → sklepu." },
+  { id: "cu_fb_004", type: "fill_blank", question: "Fill in the instrumental for a profession — 'nauczyciel' (teacher, masc.):", sentence: "Jestem ___.", blanks: ["nauczycielem"], explanation: "After 'być' with a profession, use instrumental: nauczyciel → nauczycielem." },
+  { id: "cu_fb_005", type: "fill_blank", question: "Fill in the locative after 'o' — 'Polska':", sentence: "Mówię o ___.", blanks: ["Polsce"], explanation: "'Mówić o' takes locative: Polska → Polsce." },
+  { id: "cu_fb_006", type: "fill_blank", question: "Fill in the accusative after 'czekać na' — 'autobus':", sentence: "Czekam na ___.", blanks: ["autobus"], explanation: "'Czekać na' takes accusative. Inanimate masc. autobus → autobus (no change)." },
+  { id: "cu_fb_007", type: "fill_blank", question: "Fill in the genitive after 'szukać' — 'klucz' (key):", sentence: "Szukam ___.", blanks: ["klucza"], explanation: "'Szukać' takes genitive: klucz → klucza (animate-like masc. gen.)." },
+  { id: "cu_fb_008", type: "fill_blank", question: "Fill in the dative — 'mama' (for the indirect object):", sentence: "Daję ___ prezent.", blanks: ["mamie"], explanation: "The recipient takes dative: mama → mamie. 'Daję mamie prezent.' = I give mom a gift." },
+  { id: "cu_fb_009", type: "fill_blank", question: "Fill in the locative after 'w' — 'Warszawa':", sentence: "Mieszkam w ___.", blanks: ["Warszawie"], explanation: "'Mieszkać w' + locative: Warszawa → Warszawie." },
+  { id: "cu_fb_010", type: "fill_blank", question: "Fill in the genitive after 'z' (from) — 'Polska':", sentence: "Jestem z ___.", blanks: ["Polski"], explanation: "'Z' (from) takes genitive: Polska → Polski." },
+  { id: "cu_fb_011", type: "fill_blank", question: "Fill in the instrumental (tool used) — 'długopis' (pen):", sentence: "Piszę ___.", blanks: ["długopisem"], explanation: "The tool used for an action takes instrumental: długopis → długopisem." },
+  { id: "cu_fb_012", type: "fill_blank", question: "Fill in the accusative form of 'gazeta' (newspaper):", sentence: "Czytam ___.", blanks: ["gazetę"], explanation: "Feminine -a nouns become -ę in accusative: gazeta → gazetę." },
+  { id: "cu_fb_013", type: "fill_blank", question: "Fill in the genitive after negation — 'herbata' (tea):", sentence: "Nie lubię ___.", blanks: ["herbaty"], explanation: "After negation, accusative shifts to genitive: herbata → herbaty (-a → -y)." },
+  { id: "cu_fb_014", type: "fill_blank", question: "Fill in the instrumental for profession — 'lekarka' (female doctor):", sentence: "Ona jest ___.", blanks: ["lekarką"], explanation: "After 'być' with profession, use instrumental: lekarka → lekarką." },
+  { id: "cu_fb_015", type: "fill_blank", question: "Fill in the genitive after 'bez' (without) — 'pieniądze' (money, gen.pl.):", sentence: "Jestem bez ___.", blanks: ["pieniędzy"], explanation: "'Bez' takes genitive: pieniądze → pieniędzy (genitive plural)." },
+  { id: "cu_fb_016", type: "fill_blank", question: "Fill in the locative after 'w' — 'szkoła' (school):", sentence: "Uczę się w ___.", blanks: ["szkole"], explanation: "'W' for location takes locative: szkoła → szkole." },
+  { id: "cu_fb_017", type: "fill_blank", question: "Fill in the accusative of 'kawa' (coffee) after 'pić' (to drink):", sentence: "Piję ___.", blanks: ["kawę"], explanation: "'Pić' takes accusative. Feminine kawa → kawę." },
+  { id: "cu_fb_018", type: "fill_blank", question: "Fill in the genitive after 'do' — 'praca' (work):", sentence: "Idę do ___.", blanks: ["pracy"], explanation: "'Do' takes genitive: praca → pracy (feminine -a → -y after soft consonant)." },
+
+  // ── MATCHING (8) ─────────────────────────────────────────────
+
+  {
+    id: "cu_match_001",
+    type: "matching",
+    question: "Match each verb with the case it requires for its object.",
+    pairs: [
+      { left: "lubić (to like)", right: "Accusative" },
+      { left: "szukać (to look for)", right: "Genitive" },
+      { left: "dać (to give — recipient)", right: "Dative" },
+      { left: "bać się (to be afraid of)", right: "Genitive" },
+      { left: "interesować się (to be interested in)", right: "Instrumental" },
+    ],
+  },
+  {
+    id: "cu_match_002",
+    type: "matching",
+    question: "Match each preposition with the case it requires.",
+    pairs: [
+      { left: "do (to)", right: "Genitive" },
+      { left: "w (in — location)", right: "Locative" },
+      { left: "na (on — movement)", right: "Accusative" },
+      { left: "z (from)", right: "Genitive" },
+      { left: "przed (in front of)", right: "Instrumental" },
+    ],
+  },
+  {
+    id: "cu_match_003",
+    type: "matching",
+    question: "Match each case with its main question word(s).",
+    pairs: [
+      { left: "Nominative", right: "kto? co? (who? what?)" },
+      { left: "Genitive", right: "kogo? czego? (of whom? of what?)" },
+      { left: "Dative", right: "komu? czemu? (to whom?)" },
+      { left: "Accusative", right: "kogo? co? (whom? what?)" },
+      { left: "Instrumental", right: "kim? czym? (with whom? by what?)" },
+    ],
+  },
+  {
+    id: "cu_match_004",
+    type: "matching",
+    question: "Match each context with the correct case.",
+    pairs: [
+      { left: "Subject of the sentence", right: "Nominative" },
+      { left: "Direct object (positive verb)", right: "Accusative" },
+      { left: "Direct object (after negation)", right: "Genitive" },
+      { left: "Profession after 'być'", right: "Instrumental" },
+      { left: "Location after 'w'", right: "Locative" },
+    ],
+  },
+  {
+    id: "cu_match_005",
+    type: "matching",
+    question: "Match each sentence fragment with the case used (underlined word).",
+    pairs: [
+      { left: "Nie mam __czasu__.", right: "Genitive (after negation)" },
+      { left: "Idę do __sklepu__.", right: "Genitive (after 'do')" },
+      { left: "Jestem __nauczycielem__.", right: "Instrumental (profession)" },
+      { left: "Czekam na __autobus__.", right: "Accusative (after 'czekać na')" },
+      { left: "Mówię o __Polsce__.", right: "Locative (after 'o')" },
+    ],
+  },
+  {
+    id: "cu_match_006",
+    type: "matching",
+    question: "Match each preposition to its meaning and case.",
+    pairs: [
+      { left: "bez + gen.", right: "without" },
+      { left: "dla + gen.", right: "for (someone)" },
+      { left: "przy + loc.", right: "near / by" },
+      { left: "przez + acc.", right: "through / because of" },
+      { left: "nad + instr.", right: "above / over" },
+    ],
+  },
+  {
+    id: "cu_match_007",
+    type: "matching",
+    question: "Match the noun to its correct accusative form.",
+    pairs: [
+      { left: "kawa (fem.)", right: "kawę" },
+      { left: "pies (animate masc.)", right: "psa" },
+      { left: "chleb (inanimate masc.)", right: "chleb" },
+      { left: "okno (neuter)", right: "okno" },
+      { left: "siostra (fem.)", right: "siostrę" },
+    ],
+  },
+  {
+    id: "cu_match_008",
+    type: "matching",
+    question: "Match each accusative noun with its genitive form (after negation).",
+    pairs: [
+      { left: "kawę (acc.)", right: "kawy (gen.)" },
+      { left: "herbatę (acc.)", right: "herbaty (gen.)" },
+      { left: "czas (acc.)", right: "czasu (gen.)" },
+      { left: "brata (acc.)", right: "brata (gen. — same form)" },
+      { left: "samochód (acc.)", right: "samochodu (gen.)" },
+    ],
+  },
+
+  // ── SENTENCE BUILDER (8) ─────────────────────────────────────
+
+  { id: "cu_sb_001", type: "sentence_builder", question: "Build: 'I like coffee.' (accusative object)", words: ["Lubię", "kawę", "."], correctOrder: ["Lubię", "kawę", "."], explanation: "'Lubić' takes accusative: kawa → kawę." },
+  { id: "cu_sb_002", type: "sentence_builder", question: "Build: 'I don't have time.' (genitive after negation)", words: ["Nie", "mam", "czasu", "."], correctOrder: ["Nie", "mam", "czasu", "."], explanation: "After 'nie mam', accusative shifts to genitive: czas → czasu." },
+  { id: "cu_sb_003", type: "sentence_builder", question: "Build: 'I'm going to school.' (genitive after 'do')", words: ["Idę", "do", "szkoły", "."], correctOrder: ["Idę", "do", "szkoły", "."], explanation: "'Do' takes genitive: szkoła → szkoły." },
+  { id: "cu_sb_004", type: "sentence_builder", question: "Build: 'He is a doctor.' (instrumental after 'być')", words: ["On", "jest", "lekarzem", "."], correctOrder: ["On", "jest", "lekarzem", "."], explanation: "'Być' + profession takes instrumental: lekarz → lekarzem." },
+  { id: "cu_sb_005", type: "sentence_builder", question: "Build: 'I'm talking about Poland.' (locative after 'o')", words: ["Mówię", "o", "Polsce", "."], correctOrder: ["Mówię", "o", "Polsce", "."], explanation: "'Mówić o' takes locative: Polska → Polsce." },
+  { id: "cu_sb_006", type: "sentence_builder", question: "Build: 'I'm giving mom a gift.' (dative indirect object)", words: ["Daję", "mamie", "prezent", "."], correctOrder: ["Daję", "mamie", "prezent", "."], explanation: "The recipient takes dative: mama → mamie." },
+  { id: "cu_sb_007", type: "sentence_builder", question: "Build: 'I'm looking for my keys.' (genitive after 'szukać')", words: ["Szukam", "moich", "kluczy", "."], correctOrder: ["Szukam", "moich", "kluczy", "."], explanation: "'Szukać' takes genitive: klucze → kluczy." },
+  { id: "cu_sb_008", type: "sentence_builder", question: "Build: 'She lives in Warsaw.' (locative after 'w')", words: ["Ona", "mieszka", "w", "Warszawie", "."], correctOrder: ["Ona", "mieszka", "w", "Warszawie", "."], explanation: "'Mieszkać w' + locative: Warszawa → Warszawie." },
+
+  // ── ERROR CORRECTION (7) ─────────────────────────────────────
+
+  { id: "cu_ec_001", type: "error_correction", question: "Fix the case after negation:", wrongSentence: "Nie mam kawę.", correctedSentence: "Nie mam kawy.", explanation: "After 'nie mam', accusative (kawę) shifts to genitive: kawy." },
+  { id: "cu_ec_002", type: "error_correction", question: "Fix the case after 'do':", wrongSentence: "Idę do sklep.", correctedSentence: "Idę do sklepu.", explanation: "'Do' requires genitive: sklep → sklepu." },
+  { id: "cu_ec_003", type: "error_correction", question: "Fix the case after 'być' with a profession:", wrongSentence: "Jestem nauczyciel.", correctedSentence: "Jestem nauczycielem.", explanation: "Professions after 'być' take instrumental: nauczyciel → nauczycielem." },
+  { id: "cu_ec_004", type: "error_correction", question: "Fix the case after 'szukać':", wrongSentence: "Szukam klucz.", correctedSentence: "Szukam klucza.", explanation: "'Szukać' takes genitive, not accusative: klucz → klucza." },
+  { id: "cu_ec_005", type: "error_correction", question: "Fix the case after 'mówić o':", wrongSentence: "Mówię o Polska.", correctedSentence: "Mówię o Polsce.", explanation: "'Mówić o' takes locative: Polska → Polsce." },
+  { id: "cu_ec_006", type: "error_correction", question: "Fix the case after 'bez':", wrongSentence: "Idę bez ty.", correctedSentence: "Idę bez ciebie.", explanation: "'Bez' takes genitive: ty → ciebie (genitive of 'ty')." },
+  { id: "cu_ec_007", type: "error_correction", question: "Fix the case after 'interesować się':", wrongSentence: "Interesuję się sport.", correctedSentence: "Interesuję się sportem.", explanation: "'Interesować się' takes instrumental: sport → sportem." },
+];
