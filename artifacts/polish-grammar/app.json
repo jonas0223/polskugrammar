@@ -11,12 +11,19 @@
     "splash": {
       "image": "./assets/images/icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#f8f9ff"
+      "backgroundColor": "#054013"
     },
     "ios": {
-      "supportsTablet": false
+      "supportsTablet": false,
+      "bundleIdentifier": "com.polishgrammar.practice"
     },
-    "android": {},
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundColor": "#054013"
+      },
+      "package": "com.polishgrammar.practice"
+    },
     "web": {
       "favicon": "./assets/images/icon.png"
     },
