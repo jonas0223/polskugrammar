@@ -298,14 +298,24 @@ function Matching({ exercise, onAnswer }: ExerciseCardProps) {
 // ── Sentence Builder ──────────────────────────────────────────
 function SentenceBuilder({ exercise, onAnswer }: ExerciseCardProps) {
   const colors = useColors();
-  const allWords = exercise.words ?? [];
   const correctOrder = exercise.correctOrder ?? [];
+
+  // Shuffle the word bank once on mount so the correct order is never visible
+  const [shuffledWords] = useState<string[]>(() => {
+    const words = [...(exercise.words ?? [])];
+    for (let i = words.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [words[i], words[j]] = [words[j], words[i]];
+    }
+    return words;
+  });
+
   const [placed, setPlaced] = useState<string[]>([]);
   const [submitted, setSubmitted] = useState(false);
 
-  const available = allWords.filter((w) => {
+  const available = shuffledWords.filter((w) => {
     const usedCount = placed.filter((p) => p === w).length;
-    return usedCount < allWords.filter((a) => a === w).length;
+    return usedCount < shuffledWords.filter((a) => a === w).length;
   });
 
   const isCorrect = placed.join(" ") === correctOrder.join(" ");
