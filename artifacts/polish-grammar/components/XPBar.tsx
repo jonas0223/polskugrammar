@@ -38,7 +38,7 @@ export function XPBar({ xp }: XPBarProps) {
           Level {level}
         </Text>
         <Text style={[styles.xpText, { color: colors.mutedForeground }]}>
-          {xp} XP total
+          {current} / {max} XP to next level
         </Text>
       </View>
       <View style={[styles.barBg, { backgroundColor: colors.muted }]}>
@@ -52,24 +52,19 @@ export function XPBar({ xp }: XPBarProps) {
           ]}
         />
       </View>
-      <Text style={[styles.progressText, { color: colors.mutedForeground }]}>
-        {current} / {max} XP to next level
-      </Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    gap: 6,
-  },
+  container: { gap: 8 },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
   levelText: {
-    fontSize: 14,
+    fontSize: 15,
     fontFamily: "Inter_700Bold",
   },
   xpText: {
@@ -84,9 +79,5 @@ const styles = StyleSheet.create({
   barFill: {
     height: "100%",
     borderRadius: 4,
-  },
-  progressText: {
-    fontSize: 11,
-    fontFamily: "Inter_400Regular",
   },
 });

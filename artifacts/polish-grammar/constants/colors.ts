@@ -1,43 +1,52 @@
 const colors = {
   light: {
-    text: "#1a1a2e",
-    tint: "#3b5bdb",
+    text: "#1a1a1a",
+    tint: "#054013",
 
-    background: "#f8f9ff",
-    foreground: "#1a1a2e",
+    background: "#ffffff",
+    foreground: "#1a1a1a",
 
     card: "#ffffff",
-    cardForeground: "#1a1a2e",
+    cardForeground: "#1a1a1a",
 
-    primary: "#3b5bdb",
+    // Dark green — headers, primary actions, main brand
+    primary: "#054013",
     primaryForeground: "#ffffff",
 
-    secondary: "#e8ecff",
-    secondaryForeground: "#2c3e8c",
+    // Blue — secondary accent, exercise headers, remaining stats
+    secondary: "#064b7d",
+    secondaryForeground: "#ffffff",
 
-    muted: "#f0f2ff",
+    // Light backgrounds
+    muted: "#f4f4f4",
     mutedForeground: "#6b7280",
 
-    accent: "#22c55e",
-    accentForeground: "#ffffff",
+    // Gold — XP, streaks, accuracy highlights
+    accent: "#FBCC32",
+    accentForeground: "#1a1a1a",
 
-    warning: "#f59e0b",
-    warningForeground: "#ffffff",
+    // Light yellow — question card backgrounds, highlights
+    highlight: "#fff2cc",
+    highlightForeground: "#1a1a1a",
 
-    destructive: "#ef4444",
+    // Status
+    success: "#054013",
+    successLight: "#e8f5e9",
+
+    warning: "#FBCC32",
+    warningForeground: "#1a1a1a",
+    warningLight: "#fff2cc",
+
+    destructive: "#dc2626",
     destructiveForeground: "#ffffff",
-
-    border: "#e2e8f0",
-    input: "#e2e8f0",
-
-    success: "#22c55e",
-    successLight: "#dcfce7",
-
     errorLight: "#fee2e2",
-    warningLight: "#fef3c7",
+
+    // Borders and inputs
+    border: "#D9D9D9",
+    input: "#D9D9D9",
   },
 
-  radius: 14,
+  radius: 12,
 };
 
 export default colors;

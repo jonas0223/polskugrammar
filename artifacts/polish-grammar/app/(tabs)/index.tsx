@@ -23,265 +23,217 @@ export default function DashboardScreen() {
   const router = useRouter();
   const { progress, isLessonCompleted, getWeakAreas } = useProgress();
 
-  const completedLessons = useMemo(
-    () => Object.values(progress.lessonProgress).filter((p) => p.completed).length,
-    [progress]
-  );
-
-  const totalLessons = MODULES.reduce((acc, m) => acc + m.lessons.length, 0);
-
-  const recentModules = useMemo(() => {
-    const recent = Object.values(progress.lessonProgress)
-      .filter((p) => p.completed && p.completedAt)
-      .sort(
-        (a, b) =>
-          new Date(b.completedAt!).getTime() - new Date(a.completedAt!).getTime()
-      )
-      .slice(0, 3)
-      .map((p) => MODULES.find((m) => m.id === p.moduleId))
-      .filter(Boolean);
-    return [...new Map(recent.map((m) => [m!.id, m])).values()];
-  }, [progress]);
-
-  const weakAreas = useMemo(() => {
-    return getWeakAreas()
-      .map((id) => MODULES.find((m) => m.id === id))
-      .filter(Boolean)
-      .slice(0, 2);
-  }, [getWeakAreas]);
-
-  const nextLesson = useMemo(() => {
-    for (const mod of MODULES) {
-      for (const lesson of mod.lessons) {
-        if (!isLessonCompleted(mod.id, lesson.id)) {
-          return { module: mod, lesson };
-        }
-      }
-    }
-    return null;
-  }, [isLessonCompleted]);
-
-  const overallAccuracy = useMemo(() => {
-    const lessons = Object.values(progress.lessonProgress).filter(
-      (p) => p.completed
-    );
-    if (lessons.length === 0) return null;
-    const avg = lessons.reduce((a, b) => a + b.accuracy, 0) / lessons.length;
-    return Math.round(avg * 100);
-  }, [progress]);
-
   const topPadding =
     Platform.OS === "web" ? Math.max(insets.top, 67) : insets.top;
   const bottomPadding =
     Platform.OS === "web" ? Math.max(insets.bottom, 34) : insets.bottom;
 
+  const completedLessons = useMemo(
+    () => Object.values(progress.lessonProgress).filter((p) => p.completed).length,
+    [progress]
+  );
+  const totalLessons = MODULES.reduce((acc, m) => acc + m.lessons.length, 0);
+
+  const nextLesson = useMemo(() => {
+    for (const mod of MODULES) {
+      for (const lesson of mod.lessons) {
+        if (!isLessonCompleted(mod.id, lesson.id)) return { module: mod, lesson };
+      }
+    }
+    return null;
+  }, [isLessonCompleted]);
+
+  const weakAreas = useMemo(
+    () => getWeakAreas().map((id) => MODULES.find((m) => m.id === id)).filter(Boolean).slice(0, 2),
+    [getWeakAreas]
+  );
+
+  const overallAccuracy = useMemo(() => {
+    const lessons = Object.values(progress.lessonProgress).filter((p) => p.completed);
+    if (lessons.length === 0) return null;
+    return Math.round((lessons.reduce((a, b) => a + b.accuracy, 0) / lessons.length) * 100);
+  }, [progress]);
+
   return (
-    <ScrollView
-      style={[styles.container, { backgroundColor: colors.background }]}
-      contentContainerStyle={[
-        styles.content,
-        {
-          paddingTop: topPadding + 16,
-          paddingBottom: bottomPadding + 100,
-        },
-      ]}
-      showsVerticalScrollIndicator={false}
-    >
-      <View style={styles.header}>
-        <View>
-          <Text style={[styles.greeting, { color: colors.mutedForeground }]}>
-            Dzień dobry!
-          </Text>
-          <Text style={[styles.title, { color: colors.foreground }]}>
-            Your Progress
-          </Text>
-        </View>
-        <StreakBadge streak={progress.streak} compact />
-      </View>
-
-      <View style={[styles.card, { backgroundColor: colors.card }]}>
-        <XPBar xp={progress.totalXP} />
-      </View>
-
-      <View style={styles.statsRow}>
-        <View style={[styles.statCard, { backgroundColor: colors.primary }]}>
-          <Text style={styles.statNumber}>{completedLessons}</Text>
-          <Text style={styles.statLabel}>Lessons{"\n"}Done</Text>
-        </View>
-        <View style={[styles.statCard, { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border }]}>
-          <Text style={[styles.statNumber, { color: colors.primary }]}>
-            {totalLessons - completedLessons}
-          </Text>
-          <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>
-            Remaining
-          </Text>
-        </View>
-        <View style={[styles.statCard, { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border }]}>
-          <Text style={[styles.statNumber, { color: colors.primary }]}>
-            {overallAccuracy !== null ? `${overallAccuracy}%` : "-"}
-          </Text>
-          <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>
-            Accuracy
-          </Text>
+    <View style={[styles.screen, { backgroundColor: colors.background }]}>
+      {/* ── Fixed green header ── */}
+      <View style={[styles.header, { paddingTop: topPadding + 12, backgroundColor: colors.primary }]}>
+        <View style={styles.headerTop}>
+          <View>
+            <Text style={styles.greeting}>Dzień dobry!</Text>
+            <Text style={styles.headerTitle}>Your Progress</Text>
+          </View>
+          <StreakBadge streak={progress.streak} compact />
         </View>
       </View>
 
-      {nextLesson && (
-        <>
-          <Text style={[styles.sectionTitle, { color: colors.foreground }]}>
-            Continue Learning
-          </Text>
-          <Pressable
-            onPress={() =>
-              router.push({
-                pathname: "/lesson/[moduleId]",
-                params: { moduleId: nextLesson.module.id },
-              })
-            }
-            style={({ pressed }) => [
-              styles.nextLessonCard,
-              {
-                backgroundColor: nextLesson.module.color,
-                opacity: pressed ? 0.9 : 1,
-              },
-            ]}
-          >
-            <View style={styles.nextLessonContent}>
-              <Text style={styles.nextLessonModule}>
-                {nextLesson.module.title}
-              </Text>
-              <Text style={styles.nextLessonTitle}>
-                {nextLesson.lesson.title}
-              </Text>
-            </View>
-            <View style={styles.nextArrow}>
-              <Feather name="play-circle" size={32} color="rgba(255,255,255,0.9)" />
-            </View>
-          </Pressable>
-        </>
-      )}
+      {/* ── Scrollable body ── */}
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={[styles.content, { paddingBottom: bottomPadding + 100 }]}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Level / XP card */}
+        <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <XPBar xp={progress.totalXP} />
+        </View>
 
-      {progress.reviewQueue.length > 0 && (
-        <>
-          <Text style={[styles.sectionTitle, { color: colors.foreground }]}>
-            Review Mistakes
-          </Text>
-          <Pressable
-            onPress={() => router.push("/(tabs)/review")}
-            style={({ pressed }) => [
-              styles.reviewCard,
-              {
-                backgroundColor: colors.card,
-                borderColor: colors.warning,
-                opacity: pressed ? 0.9 : 1,
-              },
-            ]}
-          >
-            <Feather name="refresh-cw" size={24} color={colors.warning} />
-            <View style={{ flex: 1 }}>
-              <Text style={[styles.reviewTitle, { color: colors.foreground }]}>
-                Spaced Repetition Review
-              </Text>
-              <Text style={[styles.reviewSub, { color: colors.mutedForeground }]}>
-                {progress.reviewQueue.length} exercises to review
-              </Text>
-            </View>
-            <Feather name="chevron-right" size={18} color={colors.mutedForeground} />
-          </Pressable>
-        </>
-      )}
+        {/* Stats row */}
+        <View style={styles.statsRow}>
+          <View style={[styles.statCard, { backgroundColor: colors.primary }]}>
+            <Text style={styles.statNumber}>{completedLessons}</Text>
+            <Text style={styles.statLabel}>Lessons{"\n"}Done</Text>
+          </View>
+          <View style={[styles.statCard, { backgroundColor: colors.secondary }]}>
+            <Text style={styles.statNumber}>{totalLessons - completedLessons}</Text>
+            <Text style={styles.statLabel}>Remaining</Text>
+          </View>
+          <View style={[styles.statCard, { backgroundColor: colors.accent }]}>
+            <Text style={[styles.statNumber, { color: "#1a1a1a" }]}>
+              {overallAccuracy !== null ? `${overallAccuracy}%` : "—"}
+            </Text>
+            <Text style={[styles.statLabel, { color: "rgba(0,0,0,0.6)" }]}>Accuracy</Text>
+          </View>
+        </View>
 
-      {weakAreas.length > 0 && (
-        <>
-          <Text style={[styles.sectionTitle, { color: colors.foreground }]}>
-            Needs Practice
-          </Text>
-          {weakAreas.map((mod) => (
+        {/* Continue Learning */}
+        {nextLesson && (
+          <>
+            <Text style={[styles.sectionTitle, { color: colors.foreground }]}>
+              Continue Learning
+            </Text>
             <Pressable
-              key={mod!.id}
               onPress={() =>
-                router.push({
-                  pathname: "/lesson/[moduleId]",
-                  params: { moduleId: mod!.id },
-                })
+                router.push({ pathname: "/lesson/[moduleId]", params: { moduleId: nextLesson.module.id } })
               }
-              style={[styles.weakCard, { backgroundColor: colors.card, borderColor: colors.errorLight }]}
+              style={({ pressed }) => [
+                styles.continueCard,
+                { backgroundColor: colors.secondary, opacity: pressed ? 0.88 : 1 },
+              ]}
             >
-              <View style={[styles.weakDot, { backgroundColor: colors.destructive }]} />
-              <Text style={[styles.weakTitle, { color: colors.foreground }]}>
-                {mod!.title}
-              </Text>
-              <Text style={[styles.weakSub, { color: colors.mutedForeground }]}>
-                Low accuracy — practice again
-              </Text>
+              <View style={styles.continueContent}>
+                <Text style={styles.continueModule}>{nextLesson.module.title}</Text>
+                <Text style={styles.continueLesson}>{nextLesson.lesson.title}</Text>
+              </View>
+              <View style={styles.playCircle}>
+                <Feather name="play" size={18} color="#fff" />
+              </View>
             </Pressable>
-          ))}
-        </>
-      )}
+          </>
+        )}
 
-      {completedLessons === 0 && (
-        <View style={[styles.emptyCard, { backgroundColor: colors.secondary }]}>
-          <Feather name="book-open" size={28} color={colors.primary} />
-          <Text style={[styles.emptyTitle, { color: colors.foreground }]}>
-            Start your first lesson!
-          </Text>
-          <Text style={[styles.emptyText, { color: colors.mutedForeground }]}>
-            Head to the Learn tab to browse all grammar topics.
-          </Text>
-        </View>
-      )}
-    </ScrollView>
+        {/* Review queue */}
+        {progress.reviewQueue.length > 0 && (
+          <>
+            <Text style={[styles.sectionTitle, { color: colors.foreground }]}>
+              Review Mistakes
+            </Text>
+            <Pressable
+              onPress={() => router.push("/(tabs)/review")}
+              style={({ pressed }) => [
+                styles.reviewCard,
+                { backgroundColor: colors.card, borderColor: colors.border, opacity: pressed ? 0.88 : 1 },
+              ]}
+            >
+              <Feather name="refresh-cw" size={22} color={colors.primary} />
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.reviewTitle, { color: colors.foreground }]}>
+                  Spaced Repetition Review
+                </Text>
+                <Text style={[styles.reviewSub, { color: colors.mutedForeground }]}>
+                  {progress.reviewQueue.length} exercises ready
+                </Text>
+              </View>
+              <Feather name="chevron-right" size={18} color={colors.mutedForeground} />
+            </Pressable>
+          </>
+        )}
+
+        {/* Weak areas */}
+        {weakAreas.length > 0 && (
+          <>
+            <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Needs Practice</Text>
+            {weakAreas.map((mod) => (
+              <Pressable
+                key={mod!.id}
+                onPress={() =>
+                  router.push({ pathname: "/lesson/[moduleId]", params: { moduleId: mod!.id } })
+                }
+                style={[styles.weakCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+              >
+                <View style={[styles.weakDot, { backgroundColor: colors.destructive }]} />
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.weakTitle, { color: colors.foreground }]}>{mod!.title}</Text>
+                  <Text style={[styles.weakSub, { color: colors.mutedForeground }]}>Low accuracy — practice again</Text>
+                </View>
+                <Feather name="chevron-right" size={16} color={colors.mutedForeground} />
+              </Pressable>
+            ))}
+          </>
+        )}
+
+        {/* Empty state */}
+        {completedLessons === 0 && (
+          <View style={[styles.emptyCard, { backgroundColor: colors.muted, borderColor: colors.border }]}>
+            <Feather name="book-open" size={28} color={colors.primary} />
+            <Text style={[styles.emptyTitle, { color: colors.foreground }]}>Start your first lesson!</Text>
+            <Text style={[styles.emptyText, { color: colors.mutedForeground }]}>
+              Head to the Learn tab to browse all grammar topics.
+            </Text>
+          </View>
+        )}
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    paddingHorizontal: 20,
-  },
+  screen: { flex: 1 },
   header: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
+  headerTop: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    marginBottom: 16,
+    marginTop: 4,
   },
   greeting: {
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: "Inter_400Regular",
+    color: "rgba(255,255,255,0.75)",
     marginBottom: 2,
   },
-  title: {
+  headerTitle: {
     fontSize: 26,
     fontFamily: "Inter_700Bold",
+    color: "#ffffff",
   },
+  scroll: { flex: 1 },
+  content: { paddingHorizontal: 20, paddingTop: 20 },
   card: {
-    borderRadius: 16,
+    borderRadius: 12,
+    borderWidth: 1,
     padding: 16,
     marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-    elevation: 2,
   },
   statsRow: {
     flexDirection: "row",
     gap: 10,
-    marginBottom: 20,
+    marginBottom: 24,
   },
   statCard: {
     flex: 1,
-    borderRadius: 14,
-    padding: 14,
+    borderRadius: 12,
+    padding: 16,
     alignItems: "center",
     gap: 4,
   },
   statNumber: {
-    fontSize: 22,
+    fontSize: 24,
     fontFamily: "Inter_700Bold",
-    color: "#fff",
+    color: "#ffffff",
   },
   statLabel: {
     fontSize: 11,
@@ -290,58 +242,49 @@ const styles = StyleSheet.create({
     color: "rgba(255,255,255,0.8)",
   },
   sectionTitle: {
-    fontSize: 17,
+    fontSize: 16,
     fontFamily: "Inter_700Bold",
     marginBottom: 10,
   },
-  nextLessonCard: {
-    borderRadius: 16,
-    padding: 20,
+  continueCard: {
+    borderRadius: 12,
+    padding: 18,
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.12,
-    shadowRadius: 10,
-    elevation: 4,
   },
-  nextLessonContent: {
-    flex: 1,
-    gap: 4,
-  },
-  nextLessonModule: {
+  continueContent: { flex: 1, gap: 4 },
+  continueModule: {
     fontSize: 12,
     fontFamily: "Inter_500Medium",
-    color: "rgba(255,255,255,0.75)",
+    color: "rgba(255,255,255,0.7)",
   },
-  nextLessonTitle: {
-    fontSize: 18,
+  continueLesson: {
+    fontSize: 17,
     fontFamily: "Inter_700Bold",
-    color: "#fff",
+    color: "#ffffff",
   },
-  nextArrow: {
-    marginLeft: 12,
+  playCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    alignItems: "center",
+    justifyContent: "center",
   },
   reviewCard: {
-    borderRadius: 14,
-    borderWidth: 1.5,
+    borderRadius: 12,
+    borderWidth: 1,
     padding: 16,
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
     marginBottom: 20,
   },
-  reviewTitle: {
-    fontSize: 15,
-    fontFamily: "Inter_600SemiBold",
-  },
-  reviewSub: {
-    fontSize: 12,
-    fontFamily: "Inter_400Regular",
-  },
+  reviewTitle: { fontSize: 14, fontFamily: "Inter_600SemiBold" },
+  reviewSub: { fontSize: 12, fontFamily: "Inter_400Regular" },
   weakCard: {
-    borderRadius: 14,
+    borderRadius: 12,
     borderWidth: 1,
     padding: 14,
     flexDirection: "row",
@@ -349,35 +292,17 @@ const styles = StyleSheet.create({
     gap: 10,
     marginBottom: 8,
   },
-  weakDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  weakTitle: {
-    fontSize: 14,
-    fontFamily: "Inter_600SemiBold",
-    flex: 1,
-  },
-  weakSub: {
-    fontSize: 12,
-    fontFamily: "Inter_400Regular",
-  },
+  weakDot: { width: 8, height: 8, borderRadius: 4 },
+  weakTitle: { fontSize: 14, fontFamily: "Inter_600SemiBold" },
+  weakSub: { fontSize: 12, fontFamily: "Inter_400Regular" },
   emptyCard: {
-    borderRadius: 16,
-    padding: 24,
+    borderRadius: 12,
+    borderWidth: 1,
+    padding: 28,
     alignItems: "center",
     gap: 10,
-    marginTop: 12,
+    marginTop: 8,
   },
-  emptyTitle: {
-    fontSize: 17,
-    fontFamily: "Inter_700Bold",
-  },
-  emptyText: {
-    fontSize: 14,
-    fontFamily: "Inter_400Regular",
-    textAlign: "center",
-    lineHeight: 20,
-  },
+  emptyTitle: { fontSize: 16, fontFamily: "Inter_700Bold" },
+  emptyText: { fontSize: 13, fontFamily: "Inter_400Regular", textAlign: "center", lineHeight: 20 },
 });

@@ -2,10 +2,8 @@ import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import React, { useState } from "react";
 import {
-  Animated,
   Platform,
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -15,57 +13,91 @@ import {
 import { useColors } from "@/hooks/useColors";
 import { Exercise } from "@/data/modules";
 
+const LETTERS = ["A", "B", "C", "D", "E", "F"];
+
 interface ExerciseCardProps {
   exercise: Exercise;
   onAnswer: (correct: boolean) => void;
 }
 
+function NextButton({ onPress }: { onPress: () => void }) {
+  const colors = useColors();
+  return (
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [styles.nextBtn, { backgroundColor: colors.primary, opacity: pressed ? 0.88 : 1 }]}
+    >
+      <Text style={styles.nextBtnText}>Next Question</Text>
+      <Feather name="arrow-right" size={18} color="#fff" />
+    </Pressable>
+  );
+}
+
+function FeedbackBar({ correct, explanation }: { correct: boolean; explanation?: string }) {
+  const colors = useColors();
+  return (
+    <View style={[styles.feedbackBar, { backgroundColor: correct ? colors.successLight : colors.errorLight, borderColor: correct ? colors.success : colors.destructive }]}>
+      <Feather name={correct ? "check-circle" : "x-circle"} size={16} color={correct ? colors.success : colors.destructive} />
+      <View style={{ flex: 1 }}>
+        <Text style={[styles.feedbackTitle, { color: correct ? "#166534" : "#991b1b" }]}>
+          {correct ? "Correct!" : "Incorrect"}
+        </Text>
+        {explanation && (
+          <Text style={[styles.feedbackExp, { color: correct ? "#166534" : "#991b1b" }]}>
+            {explanation}
+          </Text>
+        )}
+      </View>
+    </View>
+  );
+}
+
+// ── Multiple Choice ────────────────────────────────────────────
 function MultipleChoice({ exercise, onAnswer }: ExerciseCardProps) {
   const colors = useColors();
   const [selected, setSelected] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const isCorrect = selected === exercise.correctAnswer;
 
-  const handleSelect = (option: string) => {
-    if (submitted) return;
-    setSelected(option);
-  };
+  const handleSelect = (option: string) => { if (!submitted) setSelected(option); };
 
   const handleSubmit = () => {
     if (!selected || submitted) return;
-    const correct = selected === exercise.correctAnswer;
     setSubmitted(true);
     if (Platform.OS !== "web") {
-      Haptics.impactAsync(
-        correct
-          ? Haptics.ImpactFeedbackStyle.Light
-          : Haptics.ImpactFeedbackStyle.Heavy
-      );
+      Haptics.impactAsync(isCorrect ? Haptics.ImpactFeedbackStyle.Light : Haptics.ImpactFeedbackStyle.Heavy);
     }
-    setTimeout(() => onAnswer(correct), 1200);
   };
 
   return (
     <View>
-      {(exercise.options ?? []).map((option) => {
+      {(exercise.options ?? []).map((option, idx) => {
         const isSelected = selected === option;
-        const isCorrect = option === exercise.correctAnswer;
-        let bg = colors.card;
+        const isOptionCorrect = option === exercise.correctAnswer;
+        let bg = "#ffffff";
         let borderColor = colors.border;
         let textColor = colors.foreground;
+        let letterBg = colors.muted;
+        let letterColor = colors.mutedForeground;
 
         if (submitted) {
-          if (isCorrect) {
+          if (isOptionCorrect) {
             bg = colors.successLight;
             borderColor = colors.success;
             textColor = "#166534";
-          } else if (isSelected && !isCorrect) {
+            letterBg = colors.success;
+            letterColor = "#fff";
+          } else if (isSelected) {
             bg = colors.errorLight;
             borderColor = colors.destructive;
             textColor = "#991b1b";
+            letterBg = colors.destructive;
+            letterColor = "#fff";
           }
         } else if (isSelected) {
-          bg = colors.secondary;
           borderColor = colors.primary;
+          letterBg = colors.primary;
+          letterColor = "#fff";
         }
 
         return (
@@ -74,191 +106,109 @@ function MultipleChoice({ exercise, onAnswer }: ExerciseCardProps) {
             onPress={() => handleSelect(option)}
             style={[styles.option, { backgroundColor: bg, borderColor }]}
           >
-            <Text style={[styles.optionText, { color: textColor }]}>
-              {option}
-            </Text>
-            {submitted && isCorrect && (
-              <Feather name="check-circle" size={18} color={colors.success} />
-            )}
-            {submitted && isSelected && !isCorrect && (
-              <Feather name="x-circle" size={18} color={colors.destructive} />
+            <View style={[styles.letterBadge, { backgroundColor: letterBg }]}>
+              <Text style={[styles.letterText, { color: letterColor }]}>{LETTERS[idx]}</Text>
+            </View>
+            <Text style={[styles.optionText, { color: textColor, flex: 1 }]}>{option}</Text>
+            {submitted && isOptionCorrect && (
+              <Feather name="check" size={16} color={colors.success} />
             )}
           </Pressable>
         );
       })}
-      {!submitted && (
+
+      {!submitted ? (
         <Pressable
           onPress={handleSubmit}
-          style={[
-            styles.submitBtn,
-            {
-              backgroundColor: selected ? colors.primary : colors.muted,
-            },
-          ]}
+          style={[styles.checkBtn, { backgroundColor: selected ? colors.primary : colors.muted }]}
         >
-          <Text
-            style={[
-              styles.submitText,
-              { color: selected ? "#fff" : colors.mutedForeground },
-            ]}
-          >
+          <Text style={[styles.checkBtnText, { color: selected ? "#fff" : colors.mutedForeground }]}>
             Check Answer
           </Text>
         </Pressable>
-      )}
-      {submitted && exercise.explanation && (
-        <View style={[styles.explanation, { backgroundColor: colors.secondary }]}>
-          <Feather name="info" size={14} color={colors.primary} />
-          <Text style={[styles.explanationText, { color: colors.foreground }]}>
-            {exercise.explanation}
-          </Text>
-        </View>
+      ) : (
+        <>
+          <FeedbackBar correct={isCorrect} explanation={exercise.explanation} />
+          <NextButton onPress={() => onAnswer(isCorrect)} />
+        </>
       )}
     </View>
   );
 }
 
+// ── Fill in the Blank ─────────────────────────────────────────
 function FillBlank({ exercise, onAnswer }: ExerciseCardProps) {
   const colors = useColors();
   const [answer, setAnswer] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [correct, setCorrect] = useState(false);
-
   const correctAnswers = exercise.blanks ?? [];
+  const sentenceParts = (exercise.sentence ?? "").split("___");
 
   const handleSubmit = () => {
     if (!answer.trim() || submitted) return;
-    const isCorrect = correctAnswers.some(
-      (a) => a.toLowerCase().trim() === answer.toLowerCase().trim()
-    );
+    const isCorrect = correctAnswers.some((a) => a.toLowerCase().trim() === answer.toLowerCase().trim());
     setCorrect(isCorrect);
     setSubmitted(true);
     if (Platform.OS !== "web") {
-      Haptics.impactAsync(
-        isCorrect
-          ? Haptics.ImpactFeedbackStyle.Light
-          : Haptics.ImpactFeedbackStyle.Heavy
-      );
+      Haptics.impactAsync(isCorrect ? Haptics.ImpactFeedbackStyle.Light : Haptics.ImpactFeedbackStyle.Heavy);
     }
-    setTimeout(() => onAnswer(isCorrect), 1400);
   };
-
-  const sentenceParts = (exercise.sentence ?? "").split("___");
 
   return (
     <View>
-      <View style={styles.fillSentenceRow}>
+      <View style={styles.fillRow}>
         {sentenceParts.map((part, i) => (
           <React.Fragment key={i}>
-            <Text style={[styles.fillSentencePart, { color: colors.foreground }]}>
-              {part}
-            </Text>
+            <Text style={[styles.fillPart, { color: colors.foreground }]}>{part}</Text>
             {i < sentenceParts.length - 1 && (
-              <View
-                style={[
-                  styles.fillInput,
-                  {
-                    borderBottomColor: submitted
-                      ? correct
-                        ? colors.success
-                        : colors.destructive
-                      : colors.primary,
-                    backgroundColor: submitted
-                      ? correct
-                        ? colors.successLight
-                        : colors.errorLight
-                      : colors.secondary,
-                  },
-                ]}
-              >
-                <TextInput
-                  value={answer}
-                  onChangeText={setAnswer}
-                  style={[styles.fillInputText, { color: colors.foreground }]}
-                  placeholder="type here"
-                  placeholderTextColor={colors.mutedForeground}
-                  editable={!submitted}
-                  autoCorrect={false}
-                  autoCapitalize="none"
-                  onSubmitEditing={handleSubmit}
-                />
-              </View>
+              <TextInput
+                value={answer}
+                onChangeText={setAnswer}
+                style={[styles.fillInput, {
+                  color: colors.foreground,
+                  borderBottomColor: submitted ? (correct ? colors.success : colors.destructive) : colors.primary,
+                  backgroundColor: submitted ? (correct ? colors.successLight : colors.errorLight) : colors.highlight,
+                }]}
+                placeholder="____"
+                placeholderTextColor={colors.mutedForeground}
+                editable={!submitted}
+                autoCorrect={false}
+                autoCapitalize="none"
+                onSubmitEditing={handleSubmit}
+              />
             )}
           </React.Fragment>
         ))}
       </View>
 
-      {!submitted && (
+      {!submitted ? (
         <Pressable
           onPress={handleSubmit}
-          style={[
-            styles.submitBtn,
-            {
-              backgroundColor: answer.trim()
-                ? colors.primary
-                : colors.muted,
-            },
-          ]}
+          style={[styles.checkBtn, { backgroundColor: answer.trim() ? colors.primary : colors.muted }]}
         >
-          <Text
-            style={[
-              styles.submitText,
-              {
-                color: answer.trim() ? "#fff" : colors.mutedForeground,
-              },
-            ]}
-          >
+          <Text style={[styles.checkBtnText, { color: answer.trim() ? "#fff" : colors.mutedForeground }]}>
             Check Answer
           </Text>
         </Pressable>
-      )}
-
-      {submitted && (
-        <View
-          style={[
-            styles.feedbackBanner,
-            {
-              backgroundColor: correct ? colors.successLight : colors.errorLight,
-              borderColor: correct ? colors.success : colors.destructive,
-            },
-          ]}
-        >
-          <Feather
-            name={correct ? "check-circle" : "x-circle"}
-            size={16}
-            color={correct ? colors.success : colors.destructive}
+      ) : (
+        <>
+          <FeedbackBar
+            correct={correct}
+            explanation={correct ? exercise.explanation : `Correct answer: ${correctAnswers.join(" / ")}${exercise.explanation ? "\n" + exercise.explanation : ""}`}
           />
-          <Text
-            style={[
-              styles.feedbackText,
-              { color: correct ? "#166534" : "#991b1b" },
-            ]}
-          >
-            {correct
-              ? "Correct!"
-              : `Correct answer: ${correctAnswers.join(" / ")}`}
-          </Text>
-        </View>
-      )}
-
-      {submitted && exercise.explanation && (
-        <View style={[styles.explanation, { backgroundColor: colors.secondary }]}>
-          <Feather name="info" size={14} color={colors.primary} />
-          <Text style={[styles.explanationText, { color: colors.foreground }]}>
-            {exercise.explanation}
-          </Text>
-        </View>
+          <NextButton onPress={() => onAnswer(correct)} />
+        </>
       )}
     </View>
   );
 }
 
+// ── Matching ──────────────────────────────────────────────────
 function Matching({ exercise, onAnswer }: ExerciseCardProps) {
   const colors = useColors();
   const pairs = exercise.pairs ?? [];
 
-  // Shuffle the right column once on mount so it's a real matching challenge.
-  // Each item carries its original pair index so we can check correctness by index.
   const [shuffledRights] = useState<{ value: string; pairIndex: number }[]>(() => {
     const items = pairs.map((p, i) => ({ value: p.right, pairIndex: i }));
     for (let i = items.length - 1; i > 0; i--) {
@@ -268,280 +218,155 @@ function Matching({ exercise, onAnswer }: ExerciseCardProps) {
     return items;
   });
 
-  // Track everything by pair index — avoids all problems with duplicate string values.
   const [selectedLeftIdx, setSelectedLeftIdx] = useState<number | null>(null);
-  // matched: leftPairIndex -> rightPairIndex
   const [matched, setMatched] = useState<Record<number, number>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [allCorrect, setAllCorrect] = useState(false);
 
-  const handleLeftTap = (leftIdx: number) => {
-    if (submitted || matched[leftIdx] !== undefined) return;
-    setSelectedLeftIdx(leftIdx === selectedLeftIdx ? null : leftIdx);
+  const handleLeftTap = (i: number) => {
+    if (submitted || matched[i] !== undefined) return;
+    setSelectedLeftIdx(i === selectedLeftIdx ? null : i);
   };
 
   const handleRightTap = (pairIndex: number) => {
     if (submitted || selectedLeftIdx === null) return;
-    // Block if this right slot is already used
     if (Object.values(matched).includes(pairIndex)) return;
-
     const newMatched = { ...matched, [selectedLeftIdx]: pairIndex };
     setMatched(newMatched);
     setSelectedLeftIdx(null);
-
     if (Object.keys(newMatched).length === pairs.length) {
+      const correct = pairs.every((_, i) => newMatched[i] === i);
+      setAllCorrect(correct);
       setSubmitted(true);
-      // Correct when each left index is matched to the same pair index
-      const allCorrect = pairs.every((_, i) => newMatched[i] === i);
       if (Platform.OS !== "web") {
-        Haptics.impactAsync(
-          allCorrect
-            ? Haptics.ImpactFeedbackStyle.Light
-            : Haptics.ImpactFeedbackStyle.Heavy
-        );
+        Haptics.impactAsync(correct ? Haptics.ImpactFeedbackStyle.Light : Haptics.ImpactFeedbackStyle.Heavy);
       }
-      setTimeout(() => onAnswer(allCorrect), 1400);
     }
-  };
-
-  const isMatchCorrect = (leftIdx: number): boolean => {
-    if (!submitted) return false;
-    return matched[leftIdx] === leftIdx;
-  };
-
-  return (
-    <View style={styles.matchContainer}>
-      <View style={styles.matchColumn}>
-        {pairs.map((p, i) => {
-          const isSelected = selectedLeftIdx === i;
-          const isComplete = matched[i] !== undefined;
-          const correct = isMatchCorrect(i);
-          return (
-            <Pressable
-              key={i}
-              onPress={() => handleLeftTap(i)}
-              style={[
-                styles.matchChip,
-                {
-                  backgroundColor: isSelected
-                    ? colors.primary
-                    : isComplete
-                    ? submitted
-                      ? correct
-                        ? colors.successLight
-                        : colors.errorLight
-                      : colors.secondary
-                    : colors.card,
-                  borderColor: isSelected
-                    ? colors.primary
-                    : isComplete
-                    ? submitted
-                      ? correct
-                        ? colors.success
-                        : colors.destructive
-                      : colors.border
-                    : colors.border,
-                },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.matchChipText,
-                  { color: isSelected ? "#fff" : colors.foreground, fontSize: 13 },
-                ]}
-              >
-                {p.left}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </View>
-
-      <View style={styles.matchColumn}>
-        {shuffledRights.map((item, displayIdx) => {
-          const isUsed = Object.values(matched).includes(item.pairIndex);
-          return (
-            <Pressable
-              key={`r-${displayIdx}`}
-              onPress={() => handleRightTap(item.pairIndex)}
-              style={[
-                styles.matchChip,
-                {
-                  backgroundColor: isUsed ? colors.secondary : colors.card,
-                  borderColor: isUsed ? colors.primary : colors.border,
-                  opacity: isUsed && selectedLeftIdx === null ? 0.7 : 1,
-                },
-              ]}
-            >
-              <Text
-                style={[styles.matchChipText, { color: colors.foreground, fontSize: 13 }]}
-              >
-                {item.value}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </View>
-    </View>
-  );
-}
-
-function SentenceBuilder({ exercise, onAnswer }: ExerciseCardProps) {
-  const colors = useColors();
-  const allWords = exercise.words ?? [];
-  const correctOrder = exercise.correctOrder ?? [];
-
-  const [placed, setPlaced] = useState<string[]>([]);
-  const [submitted, setSubmitted] = useState(false);
-
-  const availableWords = allWords.filter((w, i) => {
-    const usedCount = placed.filter((p) => p === w).length;
-    const totalCount = allWords.filter((a) => a === w).length;
-    return usedCount < totalCount;
-  });
-
-  const handlePlace = (word: string) => {
-    if (submitted) return;
-    setPlaced([...placed, word]);
-  };
-
-  const handleRemove = (index: number) => {
-    if (submitted) return;
-    const newPlaced = [...placed];
-    newPlaced.splice(index, 1);
-    setPlaced(newPlaced);
-  };
-
-  const handleSubmit = () => {
-    if (placed.length !== correctOrder.length || submitted) return;
-    const isCorrect = placed.every((w, i) => w === correctOrder[i]);
-    setSubmitted(true);
-    if (Platform.OS !== "web") {
-      Haptics.impactAsync(
-        isCorrect
-          ? Haptics.ImpactFeedbackStyle.Light
-          : Haptics.ImpactFeedbackStyle.Heavy
-      );
-    }
-    setTimeout(() => onAnswer(isCorrect), 1400);
   };
 
   return (
     <View>
-      <View
-        style={[
-          styles.sentenceBuilderArea,
-          {
-            backgroundColor: colors.muted,
-            borderColor: submitted
-              ? placed.join(" ") === correctOrder.join(" ")
-                ? colors.success
-                : colors.destructive
-              : colors.border,
-          },
-        ]}
-      >
+      <View style={styles.matchGrid}>
+        <View style={styles.matchCol}>
+          {pairs.map((p, i) => {
+            const isSelected = selectedLeftIdx === i;
+            const isDone = matched[i] !== undefined;
+            const isCorrect = submitted && matched[i] === i;
+            const isWrong = submitted && matched[i] !== undefined && matched[i] !== i;
+            return (
+              <Pressable
+                key={i}
+                onPress={() => handleLeftTap(i)}
+                style={[styles.matchChip, {
+                  backgroundColor: isSelected ? colors.primary : isCorrect ? colors.successLight : isWrong ? colors.errorLight : isDone ? "#e8f4e8" : "#fff",
+                  borderColor: isSelected ? colors.primary : isCorrect ? colors.success : isWrong ? colors.destructive : colors.border,
+                }]}
+              >
+                <Text style={[styles.matchText, { color: isSelected ? "#fff" : colors.foreground }]}>{p.left}</Text>
+              </Pressable>
+            );
+          })}
+        </View>
+        <View style={styles.matchCol}>
+          {shuffledRights.map((item, idx) => {
+            const isUsed = Object.values(matched).includes(item.pairIndex);
+            return (
+              <Pressable
+                key={idx}
+                onPress={() => handleRightTap(item.pairIndex)}
+                style={[styles.matchChip, {
+                  backgroundColor: isUsed ? colors.highlight : "#fff",
+                  borderColor: isUsed ? colors.secondary : colors.border,
+                }]}
+              >
+                <Text style={[styles.matchText, { color: colors.foreground }]}>{item.value}</Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      </View>
+      {submitted && (
+        <>
+          <FeedbackBar correct={allCorrect} explanation={allCorrect ? "All pairs matched correctly!" : "Some pairs were incorrect."} />
+          <NextButton onPress={() => onAnswer(allCorrect)} />
+        </>
+      )}
+    </View>
+  );
+}
+
+// ── Sentence Builder ──────────────────────────────────────────
+function SentenceBuilder({ exercise, onAnswer }: ExerciseCardProps) {
+  const colors = useColors();
+  const allWords = exercise.words ?? [];
+  const correctOrder = exercise.correctOrder ?? [];
+  const [placed, setPlaced] = useState<string[]>([]);
+  const [submitted, setSubmitted] = useState(false);
+
+  const available = allWords.filter((w) => {
+    const usedCount = placed.filter((p) => p === w).length;
+    return usedCount < allWords.filter((a) => a === w).length;
+  });
+
+  const isCorrect = placed.join(" ") === correctOrder.join(" ");
+
+  const handleSubmit = () => {
+    if (placed.length !== correctOrder.length || submitted) return;
+    setSubmitted(true);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(isCorrect ? Haptics.ImpactFeedbackStyle.Light : Haptics.ImpactFeedbackStyle.Heavy);
+    }
+  };
+
+  return (
+    <View>
+      <View style={[styles.sentenceArea, {
+        backgroundColor: submitted ? (isCorrect ? colors.successLight : colors.errorLight) : colors.muted,
+        borderColor: submitted ? (isCorrect ? colors.success : colors.destructive) : colors.border,
+      }]}>
         {placed.length === 0 ? (
-          <Text style={[styles.sbPlaceholder, { color: colors.mutedForeground }]}>
-            Tap words below to build the sentence
-          </Text>
+          <Text style={[styles.sbPlaceholder, { color: colors.mutedForeground }]}>Tap words below to build the sentence</Text>
         ) : (
           <View style={styles.sbWordRow}>
             {placed.map((word, i) => (
-              <Pressable
-                key={`${word}-${i}`}
-                onPress={() => handleRemove(i)}
-                style={[styles.sbWord, { backgroundColor: colors.primary }]}
-              >
-                <Text style={[styles.sbWordText, { color: "#fff" }]}>{word}</Text>
+              <Pressable key={`${word}-${i}`} onPress={() => { if (!submitted) { const n = [...placed]; n.splice(i, 1); setPlaced(n); } }}
+                style={[styles.sbWord, { backgroundColor: colors.primary }]}>
+                <Text style={styles.sbWordText}>{word}</Text>
               </Pressable>
             ))}
           </View>
         )}
       </View>
 
-      <View style={styles.sbWordBank}>
-        {availableWords.map((word, i) => (
-          <Pressable
-            key={`bank-${word}-${i}`}
-            onPress={() => handlePlace(word)}
-            style={[
-              styles.sbBankWord,
-              { backgroundColor: colors.secondary, borderColor: colors.border },
-            ]}
-          >
-            <Text style={[styles.sbWordText, { color: colors.foreground }]}>
-              {word}
-            </Text>
+      <View style={styles.wordBank}>
+        {available.map((word, i) => (
+          <Pressable key={`bank-${word}-${i}`} onPress={() => !submitted && setPlaced([...placed, word])}
+            style={[styles.bankWord, { backgroundColor: "#fff", borderColor: colors.border }]}>
+            <Text style={[styles.sbWordText, { color: colors.foreground }]}>{word}</Text>
           </Pressable>
         ))}
       </View>
 
-      {!submitted && (
+      {!submitted ? (
         <Pressable
           onPress={handleSubmit}
-          style={[
-            styles.submitBtn,
-            {
-              backgroundColor:
-                placed.length === correctOrder.length
-                  ? colors.primary
-                  : colors.muted,
-            },
-          ]}
+          style={[styles.checkBtn, { backgroundColor: placed.length === correctOrder.length ? colors.primary : colors.muted }]}
         >
-          <Text
-            style={[
-              styles.submitText,
-              {
-                color:
-                  placed.length === correctOrder.length
-                    ? "#fff"
-                    : colors.mutedForeground,
-              },
-            ]}
-          >
+          <Text style={[styles.checkBtnText, { color: placed.length === correctOrder.length ? "#fff" : colors.mutedForeground }]}>
             Check Sentence
           </Text>
         </Pressable>
-      )}
-
-      {submitted && (
-        <View
-          style={[
-            styles.feedbackBanner,
-            {
-              backgroundColor:
-                placed.join(" ") === correctOrder.join(" ")
-                  ? colors.successLight
-                  : colors.errorLight,
-              borderColor:
-                placed.join(" ") === correctOrder.join(" ")
-                  ? colors.success
-                  : colors.destructive,
-            },
-          ]}
-        >
-          <Text
-            style={[
-              styles.feedbackText,
-              {
-                color:
-                  placed.join(" ") === correctOrder.join(" ")
-                    ? "#166534"
-                    : "#991b1b",
-              },
-            ]}
-          >
-            {placed.join(" ") === correctOrder.join(" ")
-              ? "Correct!"
-              : `Correct order: ${correctOrder.join(" ")}`}
-          </Text>
-        </View>
+      ) : (
+        <>
+          <FeedbackBar correct={isCorrect} explanation={isCorrect ? exercise.explanation : `Correct: ${correctOrder.join(" ")}${exercise.explanation ? "\n" + exercise.explanation : ""}`} />
+          <NextButton onPress={() => onAnswer(isCorrect)} />
+        </>
       )}
     </View>
   );
 }
 
+// ── Error Correction ──────────────────────────────────────────
 function ErrorCorrection({ exercise, onAnswer }: ExerciseCardProps) {
   const colors = useColors();
   const [answer, setAnswer] = useState(exercise.wrongSentence ?? "");
@@ -550,317 +375,232 @@ function ErrorCorrection({ exercise, onAnswer }: ExerciseCardProps) {
 
   const handleSubmit = () => {
     if (submitted) return;
-    const isCorrect =
-      answer.trim().toLowerCase() ===
-      (exercise.correctedSentence ?? "").trim().toLowerCase();
+    const isCorrect = answer.trim().toLowerCase() === (exercise.correctedSentence ?? "").trim().toLowerCase();
     setCorrect(isCorrect);
     setSubmitted(true);
     if (Platform.OS !== "web") {
-      Haptics.impactAsync(
-        isCorrect
-          ? Haptics.ImpactFeedbackStyle.Light
-          : Haptics.ImpactFeedbackStyle.Heavy
-      );
+      Haptics.impactAsync(isCorrect ? Haptics.ImpactFeedbackStyle.Light : Haptics.ImpactFeedbackStyle.Heavy);
     }
-    setTimeout(() => onAnswer(isCorrect), 1400);
   };
 
   return (
     <View>
-      <Text style={[styles.ecLabel, { color: colors.mutedForeground }]}>
-        Edit the sentence below to correct it:
-      </Text>
+      <Text style={[styles.ecLabel, { color: colors.mutedForeground }]}>Edit the sentence to correct it:</Text>
       <TextInput
         value={answer}
         onChangeText={setAnswer}
-        style={[
-          styles.ecInput,
-          {
-            color: colors.foreground,
-            backgroundColor: colors.secondary,
-            borderColor: submitted
-              ? correct
-                ? colors.success
-                : colors.destructive
-              : colors.border,
-          },
-        ]}
+        style={[styles.ecInput, {
+          color: colors.foreground,
+          backgroundColor: submitted ? (correct ? colors.successLight : colors.errorLight) : colors.highlight,
+          borderColor: submitted ? (correct ? colors.success : colors.destructive) : colors.border,
+        }]}
         multiline
         editable={!submitted}
         autoCorrect={false}
         autoCapitalize="none"
       />
-
-      {!submitted && (
-        <Pressable
-          onPress={handleSubmit}
-          style={[styles.submitBtn, { backgroundColor: colors.primary }]}
-        >
-          <Text style={[styles.submitText, { color: "#fff" }]}>
-            Submit Correction
-          </Text>
+      {!submitted ? (
+        <Pressable onPress={handleSubmit} style={[styles.checkBtn, { backgroundColor: colors.primary }]}>
+          <Text style={[styles.checkBtnText, { color: "#fff" }]}>Submit Correction</Text>
         </Pressable>
-      )}
-
-      {submitted && (
-        <View
-          style={[
-            styles.feedbackBanner,
-            {
-              backgroundColor: correct ? colors.successLight : colors.errorLight,
-              borderColor: correct ? colors.success : colors.destructive,
-            },
-          ]}
-        >
-          <Text
-            style={[
-              styles.feedbackText,
-              { color: correct ? "#166534" : "#991b1b" },
-            ]}
-          >
-            {correct
-              ? "Correct!"
-              : `Correct: "${exercise.correctedSentence}"`}
-          </Text>
-        </View>
-      )}
-
-      {submitted && exercise.explanation && (
-        <View style={[styles.explanation, { backgroundColor: colors.secondary }]}>
-          <Feather name="info" size={14} color={colors.primary} />
-          <Text style={[styles.explanationText, { color: colors.foreground }]}>
-            {exercise.explanation}
-          </Text>
-        </View>
+      ) : (
+        <>
+          <FeedbackBar correct={correct} explanation={correct ? exercise.explanation : `Correct: "${exercise.correctedSentence}"${exercise.explanation ? "\n" + exercise.explanation : ""}`} />
+          <NextButton onPress={() => onAnswer(correct)} />
+        </>
       )}
     </View>
   );
 }
 
+// ── Main ExerciseCard ─────────────────────────────────────────
 export function ExerciseCard({ exercise, onAnswer }: ExerciseCardProps) {
   const colors = useColors();
 
-  const typeLabel: Record<string, string> = {
-    multiple_choice: "Multiple Choice",
-    fill_blank: "Fill in the Blank",
-    matching: "Matching",
-    sentence_builder: "Sentence Builder",
-    error_correction: "Error Correction",
-  };
-
   return (
-    <View style={[styles.card, { backgroundColor: colors.card }]}>
-      <View style={styles.typeBadge}>
-        <Text style={[styles.typeLabel, { color: colors.primary }]}>
-          {typeLabel[exercise.type] ?? exercise.type}
-        </Text>
+    <View style={styles.wrapper}>
+      {/* Question card - light yellow */}
+      <View style={[styles.questionCard, { backgroundColor: colors.highlight, borderColor: "#f0d98c" }]}>
+        <Text style={[styles.question, { color: colors.foreground }]}>{exercise.question}</Text>
+        {exercise.hint && (
+          <Text style={[styles.hint, { color: colors.mutedForeground }]}>💡 {exercise.hint}</Text>
+        )}
       </View>
-      <Text style={[styles.question, { color: colors.foreground }]}>
-        {exercise.question}
-      </Text>
-      {exercise.hint && (
-        <Text style={[styles.hint, { color: colors.mutedForeground }]}>
-          Hint: {exercise.hint}
-        </Text>
-      )}
 
-      {exercise.type === "multiple_choice" && (
-        <MultipleChoice exercise={exercise} onAnswer={onAnswer} />
-      )}
-      {exercise.type === "fill_blank" && (
-        <FillBlank exercise={exercise} onAnswer={onAnswer} />
-      )}
-      {exercise.type === "matching" && (
-        <Matching exercise={exercise} onAnswer={onAnswer} />
-      )}
-      {exercise.type === "sentence_builder" && (
-        <SentenceBuilder exercise={exercise} onAnswer={onAnswer} />
-      )}
-      {exercise.type === "error_correction" && (
-        <ErrorCorrection exercise={exercise} onAnswer={onAnswer} />
-      )}
+      {/* Exercise body */}
+      <View style={styles.body}>
+        {exercise.type === "multiple_choice" && <MultipleChoice exercise={exercise} onAnswer={onAnswer} />}
+        {exercise.type === "fill_blank" && <FillBlank exercise={exercise} onAnswer={onAnswer} />}
+        {exercise.type === "matching" && <Matching exercise={exercise} onAnswer={onAnswer} />}
+        {exercise.type === "sentence_builder" && <SentenceBuilder exercise={exercise} onAnswer={onAnswer} />}
+        {exercise.type === "error_correction" && <ErrorCorrection exercise={exercise} onAnswer={onAnswer} />}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    borderRadius: 16,
+  wrapper: { gap: 12 },
+  questionCard: {
+    borderRadius: 12,
+    borderWidth: 1,
     padding: 20,
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  typeBadge: {
-    marginBottom: 8,
-  },
-  typeLabel: {
-    fontSize: 11,
-    fontFamily: "Inter_600SemiBold",
-    textTransform: "uppercase",
-    letterSpacing: 0.8,
+    gap: 8,
   },
   question: {
-    fontSize: 16,
+    fontSize: 17,
     fontFamily: "Inter_600SemiBold",
-    marginBottom: 16,
-    lineHeight: 24,
+    lineHeight: 26,
   },
   hint: {
     fontSize: 13,
     fontFamily: "Inter_400Regular",
-    marginBottom: 12,
     fontStyle: "italic",
   },
+  body: { gap: 0 },
+  // Options
   option: {
-    borderRadius: 12,
+    borderRadius: 10,
     borderWidth: 1.5,
     padding: 14,
     marginBottom: 10,
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
+    gap: 12,
+  },
+  letterBadge: {
+    width: 28,
+    height: 28,
+    borderRadius: 7,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  letterText: {
+    fontSize: 13,
+    fontFamily: "Inter_700Bold",
   },
   optionText: {
     fontSize: 15,
     fontFamily: "Inter_500Medium",
-    flex: 1,
   },
-  submitBtn: {
-    borderRadius: 12,
+  // Buttons
+  checkBtn: {
+    borderRadius: 10,
     padding: 14,
     alignItems: "center",
+    marginTop: 4,
+  },
+  checkBtnText: {
+    fontSize: 15,
+    fontFamily: "Inter_700Bold",
+  },
+  nextBtn: {
+    borderRadius: 10,
+    padding: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    marginTop: 12,
+  },
+  nextBtnText: {
+    fontSize: 15,
+    fontFamily: "Inter_700Bold",
+    color: "#fff",
+  },
+  // Feedback
+  feedbackBar: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    padding: 14,
     marginTop: 8,
   },
-  submitText: {
-    fontSize: 15,
-    fontFamily: "Inter_600SemiBold",
+  feedbackTitle: {
+    fontSize: 14,
+    fontFamily: "Inter_700Bold",
   },
-  explanation: {
-    borderRadius: 10,
-    padding: 12,
-    marginTop: 12,
-    flexDirection: "row",
-    gap: 8,
-  },
-  explanationText: {
+  feedbackExp: {
     fontSize: 13,
     fontFamily: "Inter_400Regular",
-    flex: 1,
-    lineHeight: 20,
+    marginTop: 3,
+    lineHeight: 19,
   },
-  fillSentenceRow: {
+  // Fill blank
+  fillRow: {
     flexDirection: "row",
     flexWrap: "wrap",
     alignItems: "center",
-    marginBottom: 16,
     gap: 4,
+    marginBottom: 12,
   },
-  fillSentencePart: {
+  fillPart: {
     fontSize: 16,
     fontFamily: "Inter_500Medium",
   },
   fillInput: {
     borderBottomWidth: 2,
+    borderRadius: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
     minWidth: 80,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-  },
-  fillInputText: {
     fontSize: 16,
-    fontFamily: "Inter_500Medium",
-    textAlign: "center",
+    fontFamily: "Inter_600SemiBold",
   },
-  feedbackBanner: {
-    borderRadius: 10,
-    borderWidth: 1,
-    padding: 12,
-    marginTop: 12,
+  // Matching
+  matchGrid: {
     flexDirection: "row",
     gap: 8,
-    alignItems: "center",
-  },
-  feedbackText: {
-    fontSize: 14,
-    fontFamily: "Inter_500Medium",
-    flex: 1,
-  },
-  matchContainer: {
-    flexDirection: "row",
-    gap: 10,
     marginBottom: 8,
   },
-  matchColumn: {
-    flex: 1,
-    gap: 8,
-  },
+  matchCol: { flex: 1, gap: 8 },
   matchChip: {
-    borderRadius: 10,
+    borderRadius: 8,
     borderWidth: 1.5,
     padding: 10,
     alignItems: "center",
-    justifyContent: "center",
     minHeight: 44,
+    justifyContent: "center",
   },
-  matchChipText: {
+  matchText: {
+    fontSize: 13,
     fontFamily: "Inter_500Medium",
     textAlign: "center",
   },
-  sentenceBuilderArea: {
-    borderRadius: 12,
+  // Sentence Builder
+  sentenceArea: {
+    borderRadius: 10,
     borderWidth: 1.5,
-    padding: 14,
-    minHeight: 60,
+    minHeight: 56,
+    padding: 12,
     marginBottom: 12,
   },
-  sbPlaceholder: {
-    fontSize: 14,
-    fontFamily: "Inter_400Regular",
-    fontStyle: "italic",
-  },
-  sbWordRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 6,
-  },
+  sbPlaceholder: { fontSize: 14, fontFamily: "Inter_400Regular", fontStyle: "italic" },
+  sbWordRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   sbWord: {
     borderRadius: 8,
     paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingVertical: 8,
   },
-  sbWordText: {
-    fontSize: 14,
-    fontFamily: "Inter_500Medium",
-  },
-  sbWordBank: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-    marginBottom: 12,
-  },
-  sbBankWord: {
+  sbWordText: { fontSize: 14, fontFamily: "Inter_600SemiBold", color: "#fff" },
+  wordBank: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 12 },
+  bankWord: {
     borderRadius: 8,
-    borderWidth: 1,
+    borderWidth: 1.5,
     paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingVertical: 8,
   },
-  ecLabel: {
-    fontSize: 13,
-    fontFamily: "Inter_400Regular",
-    marginBottom: 8,
-  },
+  // Error correction
+  ecLabel: { fontSize: 13, fontFamily: "Inter_400Regular", marginBottom: 8 },
   ecInput: {
-    borderRadius: 12,
+    borderRadius: 10,
     borderWidth: 1.5,
     padding: 14,
-    fontSize: 16,
-    fontFamily: "Inter_400Regular",
+    fontSize: 15,
+    fontFamily: "Inter_500Medium",
     marginBottom: 12,
-    minHeight: 80,
-    textAlignVertical: "top",
+    lineHeight: 22,
   },
 });

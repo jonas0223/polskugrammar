@@ -28,17 +28,22 @@ function shuffleArray<T>(arr: T[]): T[] {
   return a;
 }
 
-const MODES: { key: StudyMode; label: string; icon: string; count: number; desc: string; color: string }[] = [
-  { key: "quick",   label: "Quick",   icon: "zap",        count: 5,   desc: "5 questions",   color: "#16a34a" },
-  { key: "refresh", label: "Refresh", icon: "refresh-cw", count: 30,  desc: "30 questions",  color: "#0891b2" },
-  { key: "exam",    label: "Exam",    icon: "award",      count: 200, desc: "All questions",  color: "#7c3aed" },
+const MODES: { key: StudyMode; label: string; icon: string; count: number; color: string }[] = [
+  { key: "quick",   label: "Quick",   icon: "zap",        count: 5,   color: "#054013" },
+  { key: "refresh", label: "Refresh", icon: "refresh-cw", count: 30,  color: "#064b7d" },
+  { key: "exam",    label: "Exam",    icon: "award",      count: 200, color: "#7c3aed" },
 ];
 
+const TYPE_LABELS: Record<string, string> = {
+  multiple_choice: "Multiple Choice",
+  fill_blank: "Fill in the Blank",
+  matching: "Matching",
+  sentence_builder: "Sentence Builder",
+  error_correction: "Error Correction",
+};
+
 export default function StudyScreen() {
-  const { moduleId, lessonId } = useLocalSearchParams<{
-    moduleId: string;
-    lessonId: string;
-  }>();
+  const { moduleId, lessonId } = useLocalSearchParams<{ moduleId: string; lessonId: string }>();
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const router = useRouter();
@@ -52,11 +57,13 @@ export default function StudyScreen() {
   const [currentEx, setCurrentEx] = useState(0);
   const [activeExercises, setActiveExercises] = useState(() => {
     const all = lesson?.exercises ?? [];
-    const modeObj = MODES.find((m) => m.key === "quick")!;
-    return shuffleArray(all).slice(0, modeObj.count);
+    return shuffleArray(all).slice(0, 5);
   });
   const mistakesRef = useRef<string[]>([]);
   const correctCountRef = useRef(0);
+
+  const topPadding = Platform.OS === "web" ? Math.max(insets.top, 67) : insets.top;
+  const bottomPadding = Platform.OS === "web" ? Math.max(insets.bottom, 34) : insets.bottom;
 
   const startSession = (selectedMode: StudyMode) => {
     const all = lesson?.exercises ?? [];
@@ -73,23 +80,14 @@ export default function StudyScreen() {
     async (correct: boolean) => {
       const ex = activeExercises[currentEx];
       if (!ex) return;
-
-      if (!correct) {
-        mistakesRef.current.push(ex.id);
-      } else {
-        correctCountRef.current += 1;
-      }
+      if (!correct) mistakesRef.current.push(ex.id);
+      else correctCountRef.current += 1;
 
       const nextIndex = currentEx + 1;
       if (nextIndex >= activeExercises.length) {
         const total = activeExercises.length;
         const accuracy = correctCountRef.current / total;
-        await completeLesson(
-          moduleId ?? "",
-          lessonId ?? "",
-          accuracy,
-          mistakesRef.current
-        );
+        await completeLesson(moduleId ?? "", lessonId ?? "", accuracy, mistakesRef.current);
         setPhase("complete");
       } else {
         setCurrentEx(nextIndex);
@@ -98,17 +96,10 @@ export default function StudyScreen() {
     [currentEx, activeExercises, moduleId, lessonId, completeLesson]
   );
 
-  const topPadding =
-    Platform.OS === "web" ? Math.max(insets.top, 67) : insets.top;
-  const bottomPadding =
-    Platform.OS === "web" ? Math.max(insets.bottom, 34) : insets.bottom;
-
   if (!module || !lesson) {
     return (
       <View style={[styles.center, { backgroundColor: colors.background }]}>
-        <Text style={[styles.errorText, { color: colors.destructive }]}>
-          Lesson not found.
-        </Text>
+        <Text style={[{ color: colors.destructive, fontSize: 16, fontFamily: "Inter_500Medium" }]}>Lesson not found.</Text>
       </View>
     );
   }
@@ -118,98 +109,59 @@ export default function StudyScreen() {
     const total = activeExercises.length;
     const correct = correctCountRef.current;
     const accuracy = Math.round((correct / total) * 100);
-    const modeObj = MODES.find((m) => m.key === mode)!;
 
     return (
-      <View
-        style={[
-          styles.completeContainer,
-          {
-            backgroundColor: colors.background,
-            paddingTop: topPadding + 20,
-            paddingBottom: bottomPadding + 20,
-          },
-        ]}
-      >
-        <View style={[styles.completeCard, { backgroundColor: colors.card }]}>
-          <View
-            style={[styles.completeMedal, { backgroundColor: module.color + "20" }]}
-          >
-            <Feather
-              name="award"
-              size={40}
-              color={accuracy >= 70 ? module.color : colors.warning}
-            />
-          </View>
-          <View style={[styles.modeBadge, { backgroundColor: modeObj.color + "18" }]}>
-            <Feather name={modeObj.icon as any} size={12} color={modeObj.color} />
-            <Text style={[styles.modeBadgeText, { color: modeObj.color }]}>
-              {modeObj.label} Mode
-            </Text>
-          </View>
-          <Text style={[styles.completeTitle, { color: colors.foreground }]}>
-            Session Complete!
-          </Text>
-          <Text style={[styles.lessonName, { color: colors.mutedForeground }]}>
-            {lesson.title}
-          </Text>
-          <View style={styles.statsRow}>
-            <View style={styles.stat}>
-              <Text style={[styles.statNum, { color: module.color }]}>
-                {accuracy}%
-              </Text>
-              <Text style={[styles.statLab, { color: colors.mutedForeground }]}>
-                Accuracy
-              </Text>
-            </View>
-            <View
-              style={[styles.statDivider, { backgroundColor: colors.border }]}
-            />
-            <View style={styles.stat}>
-              <Text style={[styles.statNum, { color: module.color }]}>
-                {correct}/{total}
-              </Text>
-              <Text style={[styles.statLab, { color: colors.mutedForeground }]}>
-                Correct
-              </Text>
-            </View>
-            <View
-              style={[styles.statDivider, { backgroundColor: colors.border }]}
-            />
-            <View style={styles.stat}>
-              <Text style={[styles.statNum, { color: module.color }]}>
-                +{accuracy}
-              </Text>
-              <Text style={[styles.statLab, { color: colors.mutedForeground }]}>
-                XP Earned
-              </Text>
-            </View>
-          </View>
-          {mistakesRef.current.length > 0 && (
-            <Text style={[styles.mistakeHint, { color: colors.mutedForeground }]}>
-              {mistakesRef.current.length} mistake
-              {mistakesRef.current.length > 1 ? "s" : ""} added to your review queue.
-            </Text>
-          )}
+      <View style={[styles.screen, { backgroundColor: colors.background }]}>
+        <View style={[styles.blueHeader, { paddingTop: topPadding + 12, backgroundColor: colors.primary }]}>
+          <Pressable onPress={() => router.back()} style={styles.backRow}>
+            <Feather name="arrow-left" size={18} color="rgba(255,255,255,0.8)" />
+            <Text style={styles.backText}>Back</Text>
+          </Pressable>
+          <Text style={styles.blueHeaderTitle}>Session Complete</Text>
         </View>
 
-        <View style={styles.completeBtns}>
-          <Pressable
-            onPress={() => router.back()}
-            style={[styles.outlineBtn, { borderColor: colors.primary }]}
-          >
-            <Text style={[styles.outlineBtnText, { color: colors.primary }]}>
-              Back
+        <ScrollView contentContainerStyle={[styles.completePad, { paddingBottom: bottomPadding + 40 }]}>
+          <View style={[styles.completeCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View style={[styles.medal, { backgroundColor: colors.primary + "18" }]}>
+              <Feather name="award" size={44} color={accuracy >= 70 ? colors.primary : colors.accent} />
+            </View>
+            <Text style={[styles.completeTitle, { color: colors.foreground }]}>
+              {accuracy >= 80 ? "Excellent!" : accuracy >= 60 ? "Good job!" : "Keep practising!"}
             </Text>
-          </Pressable>
-          <Pressable
-            onPress={() => setPhase("intro")}
-            style={[styles.solidBtn, { backgroundColor: module.color }]}
-          >
-            <Feather name="refresh-ccw" size={16} color="#fff" />
-            <Text style={styles.solidBtnText}>Try Again</Text>
-          </Pressable>
-        </View>
+            <Text style={[styles.lessonName, { color: colors.mutedForeground }]}>{lesson.title}</Text>
+            <View style={styles.statsRow}>
+              <View style={styles.stat}>
+                <Text style={[styles.statNum, { color: colors.primary }]}>{accuracy}%</Text>
+                <Text style={[styles.statLab, { color: colors.mutedForeground }]}>Accuracy</Text>
+              </View>
+              <View style={[styles.statDiv, { backgroundColor: colors.border }]} />
+              <View style={styles.stat}>
+                <Text style={[styles.statNum, { color: colors.primary }]}>{correct}/{total}</Text>
+                <Text style={[styles.statLab, { color: colors.mutedForeground }]}>Correct</Text>
+              </View>
+              <View style={[styles.statDiv, { backgroundColor: colors.border }]} />
+              <View style={styles.stat}>
+                <Text style={[styles.statNum, { color: colors.accent }]}>+{accuracy}</Text>
+                <Text style={[styles.statLab, { color: colors.mutedForeground }]}>XP</Text>
+              </View>
+            </View>
+            {mistakesRef.current.length > 0 && (
+              <Text style={[styles.mistakeHint, { color: colors.mutedForeground }]}>
+                {mistakesRef.current.length} mistake{mistakesRef.current.length > 1 ? "s" : ""} added to review queue.
+              </Text>
+            )}
+          </View>
+
+          <View style={styles.completeBtns}>
+            <Pressable onPress={() => router.back()} style={[styles.outlineBtn, { borderColor: colors.primary }]}>
+              <Text style={[styles.outlineBtnText, { color: colors.primary }]}>Back</Text>
+            </Pressable>
+            <Pressable onPress={() => setPhase("intro")} style={[styles.solidBtn, { backgroundColor: colors.primary }]}>
+              <Feather name="refresh-ccw" size={16} color="#fff" />
+              <Text style={styles.solidBtnText}>Try Again</Text>
+            </Pressable>
+          </View>
+        </ScrollView>
       </View>
     );
   }
@@ -217,203 +169,142 @@ export default function StudyScreen() {
   // ── INTRO SCREEN ─────────────────────────────────────────────
   if (phase === "intro") {
     const totalExercises = lesson.exercises.length;
-
     return (
-      <ScrollView
-        style={[styles.container, { backgroundColor: colors.background }]}
-        contentContainerStyle={[
-          styles.content,
-          { paddingTop: topPadding + 16, paddingBottom: bottomPadding + 40 },
-        ]}
-        showsVerticalScrollIndicator={false}
-      >
-        <Pressable onPress={() => router.back()} style={styles.backBtn}>
-          <Feather name="arrow-left" size={20} color={colors.primary} />
-          <Text style={[styles.backText, { color: colors.primary }]}>Back</Text>
-        </Pressable>
+      <View style={[styles.screen, { backgroundColor: colors.background }]}>
+        <View style={[styles.blueHeader, { paddingTop: topPadding + 12, backgroundColor: colors.secondary }]}>
+          <Pressable onPress={() => router.back()} style={styles.backRow}>
+            <Feather name="arrow-left" size={18} color="rgba(255,255,255,0.8)" />
+            <Text style={styles.backText}>Back</Text>
+          </Pressable>
+          <Text style={styles.blueHeaderTitle}>{lesson.title}</Text>
+          <Text style={styles.blueHeaderSub}>{module.title}</Text>
+        </View>
 
-        <View
-          style={[styles.introHeader, { backgroundColor: module.color + "14" }]}
+        <ScrollView
+          contentContainerStyle={[styles.introPad, { paddingBottom: bottomPadding + 40 }]}
+          showsVerticalScrollIndicator={false}
         >
-          <Text style={[styles.moduleTag, { color: module.color }]}>
-            {module.title}
-          </Text>
-          <Text style={[styles.lessonTitle, { color: colors.foreground }]}>
-            {lesson.title}
-          </Text>
-          <Text style={[styles.exerciseCount, { color: colors.mutedForeground }]}>
-            {totalExercises} exercises available
-          </Text>
-        </View>
-
-        <Text style={[styles.sectionLabel, { color: colors.mutedForeground }]}>
-          EXPLANATION
-        </Text>
-        <View style={[styles.explanationBox, { backgroundColor: colors.card }]}>
-          <Text style={[styles.explanationText, { color: colors.foreground }]}>
-            {lesson.explanation}
-          </Text>
-        </View>
-
-        <Text style={[styles.sectionLabel, { color: colors.mutedForeground }]}>
-          EXAMPLES
-        </Text>
-        {lesson.examples.map((ex, i) => (
-          <View
-            key={i}
-            style={[styles.exampleCard, { backgroundColor: colors.secondary }]}
-          >
-            <Text style={[styles.polishText, { color: colors.primary }]}>
-              {ex.polish}
-            </Text>
-            <Text
-              style={[styles.englishText, { color: colors.mutedForeground }]}
-            >
-              {ex.english}
-            </Text>
+          <Text style={[styles.sectionLabel, { color: colors.mutedForeground }]}>EXPLANATION</Text>
+          <View style={[styles.box, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Text style={[styles.explanationText, { color: colors.foreground }]}>{lesson.explanation}</Text>
           </View>
-        ))}
 
-        <Text style={[styles.sectionLabel, { color: colors.mutedForeground }]}>
-          CHOOSE SESSION TYPE
-        </Text>
+          <Text style={[styles.sectionLabel, { color: colors.mutedForeground }]}>EXAMPLES</Text>
+          {lesson.examples.map((ex, i) => (
+            <View key={i} style={[styles.exCard, { backgroundColor: colors.highlight, borderColor: "#f0d98c" }]}>
+              <Text style={[styles.polishEx, { color: colors.primary }]}>{ex.polish}</Text>
+              <Text style={[styles.englishEx, { color: colors.mutedForeground }]}>{ex.english}</Text>
+            </View>
+          ))}
 
-        <View style={styles.modeGrid}>
-          {MODES.map((m) => {
-            const available = Math.min(m.count, totalExercises);
-            const disabled = totalExercises < 1;
-            return (
-              <Pressable
-                key={m.key}
-                onPress={() => !disabled && startSession(m.key)}
-                style={[
-                  styles.modeCard,
-                  {
+          <Text style={[styles.sectionLabel, { color: colors.mutedForeground }]}>CHOOSE SESSION TYPE</Text>
+          <View style={styles.modeGrid}>
+            {MODES.map((m) => {
+              const available = Math.min(m.count, totalExercises);
+              return (
+                <Pressable
+                  key={m.key}
+                  onPress={() => startSession(m.key)}
+                  style={({ pressed }) => [styles.modeCard, {
                     backgroundColor: colors.card,
                     borderColor: m.color,
-                    borderWidth: 1.5,
-                    opacity: disabled ? 0.4 : 1,
-                  },
-                ]}
-              >
-                <View style={[styles.modeIcon, { backgroundColor: m.color + "18" }]}>
-                  <Feather name={m.icon as any} size={22} color={m.color} />
-                </View>
-                <Text style={[styles.modeLabel, { color: colors.foreground }]}>
-                  {m.label}
-                </Text>
-                <Text style={[styles.modeCount, { color: m.color }]}>
-                  {available} question{available !== 1 ? "s" : ""}
-                </Text>
-                <Text style={[styles.modeDesc, { color: colors.mutedForeground }]}>
-                  {m.key === "quick" && "Fast practice"}
-                  {m.key === "refresh" && "Solid review"}
-                  {m.key === "exam" && "Full coverage"}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
-      </ScrollView>
+                    opacity: pressed ? 0.88 : 1,
+                  }]}
+                >
+                  <View style={[styles.modeIcon, { backgroundColor: m.color + "18" }]}>
+                    <Feather name={m.icon as any} size={22} color={m.color} />
+                  </View>
+                  <Text style={[styles.modeLabel, { color: colors.foreground }]}>{m.label}</Text>
+                  <Text style={[styles.modeCount, { color: m.color }]}>{available}q</Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        </ScrollView>
+      </View>
     );
   }
 
-  // ── EXERCISE SCREEN ──────────────────────────────────────────
+  // ── EXERCISE SCREEN ───────────────────────────────────────────
   const exercise = activeExercises[currentEx];
   const progressPct = ((currentEx + 1) / activeExercises.length) * 100;
-  const modeObj = MODES.find((m) => m.key === mode)!;
+  const typeLabel = TYPE_LABELS[exercise?.type] ?? "Exercise";
 
   return (
-    <ScrollView
-      style={[styles.container, { backgroundColor: colors.background }]}
-      contentContainerStyle={[
-        styles.content,
-        { paddingTop: topPadding + 16, paddingBottom: bottomPadding + 40 },
-      ]}
-      showsVerticalScrollIndicator={false}
-      keyboardShouldPersistTaps="handled"
-    >
-      <View style={styles.exerciseHeader}>
-        <Pressable
-          onPress={() => setPhase("intro")}
-          style={styles.quitBtn}
-        >
-          <Feather name="x" size={20} color={colors.mutedForeground} />
+    <View style={[styles.screen, { backgroundColor: colors.background }]}>
+      {/* Blue fixed header */}
+      <View style={[styles.blueHeader, { paddingTop: topPadding + 12, backgroundColor: colors.secondary }]}>
+        <Pressable onPress={() => setPhase("intro")} style={styles.backRow}>
+          <Feather name="arrow-left" size={18} color="rgba(255,255,255,0.8)" />
+          <Text style={styles.backText}>Back</Text>
         </Pressable>
-        <View style={[styles.progressBg, { backgroundColor: colors.muted }]}>
-          <View
-            style={[
-              styles.progressFill,
-              {
-                backgroundColor: modeObj.color,
-                width: `${progressPct}%` as any,
-              },
-            ]}
-          />
+        <Text style={styles.blueHeaderTitle}>{typeLabel}</Text>
+        <View style={styles.progressRow}>
+          <Text style={styles.progressLabel}>Question {currentEx + 1} of {activeExercises.length}</Text>
         </View>
-        <Text style={[styles.progressCount, { color: colors.mutedForeground }]}>
-          {currentEx + 1}/{activeExercises.length}
-        </Text>
+        <View style={styles.progressBg}>
+          <View style={[styles.progressFill, { width: `${progressPct}%` as any, backgroundColor: colors.accent }]} />
+        </View>
       </View>
 
-      <View style={[styles.modePill, { backgroundColor: modeObj.color + "14" }]}>
-        <Feather name={modeObj.icon as any} size={11} color={modeObj.color} />
-        <Text style={[styles.modePillText, { color: modeObj.color }]}>
-          {modeObj.label}
-        </Text>
-      </View>
-
-      <ExerciseCard key={exercise.id} exercise={exercise} onAnswer={handleAnswer} />
-    </ScrollView>
+      <ScrollView
+        contentContainerStyle={[styles.exercisePad, { paddingBottom: bottomPadding + 40 }]}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        <ExerciseCard key={exercise.id} exercise={exercise} onAnswer={handleAnswer} />
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  content: { paddingHorizontal: 20 },
+  screen: { flex: 1 },
   center: { flex: 1, alignItems: "center", justifyContent: "center" },
-  errorText: { fontSize: 16, fontFamily: "Inter_500Medium" },
-  backBtn: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 16 },
-  backText: { fontSize: 15, fontFamily: "Inter_600SemiBold" },
-  introHeader: { borderRadius: 20, padding: 24, alignItems: "center", gap: 8, marginBottom: 24 },
-  moduleTag: { fontSize: 12, fontFamily: "Inter_700Bold", textTransform: "uppercase", letterSpacing: 0.8 },
-  lessonTitle: { fontSize: 24, fontFamily: "Inter_700Bold", textAlign: "center" },
-  exerciseCount: { fontSize: 13, fontFamily: "Inter_400Regular" },
-  sectionLabel: { fontSize: 11, fontFamily: "Inter_700Bold", letterSpacing: 1, marginBottom: 10, marginTop: 4 },
-  explanationBox: { borderRadius: 14, padding: 16, marginBottom: 20, shadowColor: "#000", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 4, elevation: 1 },
-  explanationText: { fontSize: 15, fontFamily: "Inter_400Regular", lineHeight: 24 },
-  exampleCard: { borderRadius: 12, padding: 14, marginBottom: 8, gap: 4 },
-  polishText: { fontSize: 16, fontFamily: "Inter_600SemiBold" },
-  englishText: { fontSize: 13, fontFamily: "Inter_400Regular", fontStyle: "italic" },
-  modeGrid: { flexDirection: "row", gap: 10, marginTop: 4, marginBottom: 8 },
-  modeCard: { flex: 1, borderRadius: 16, padding: 16, alignItems: "center", gap: 6, shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 },
-  modeIcon: { width: 44, height: 44, borderRadius: 12, alignItems: "center", justifyContent: "center" },
-  modeLabel: { fontSize: 15, fontFamily: "Inter_700Bold" },
-  modeCount: { fontSize: 13, fontFamily: "Inter_600SemiBold" },
-  modeDesc: { fontSize: 11, fontFamily: "Inter_400Regular", textAlign: "center" },
-  modePill: { flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20, alignSelf: "flex-start", marginBottom: 14 },
-  modePillText: { fontSize: 11, fontFamily: "Inter_700Bold", textTransform: "uppercase", letterSpacing: 0.5 },
-  exerciseHeader: { flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 8 },
-  quitBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
-  progressBg: { flex: 1, height: 6, borderRadius: 3, overflow: "hidden" },
+  // Blue/green fixed header
+  blueHeader: {
+    paddingHorizontal: 20,
+    paddingBottom: 18,
+    gap: 4,
+  },
+  backRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 6 },
+  backText: { fontSize: 14, fontFamily: "Inter_500Medium", color: "rgba(255,255,255,0.85)" },
+  blueHeaderTitle: { fontSize: 22, fontFamily: "Inter_700Bold", color: "#fff" },
+  blueHeaderSub: { fontSize: 13, fontFamily: "Inter_400Regular", color: "rgba(255,255,255,0.7)" },
+  progressRow: { flexDirection: "row", alignItems: "center", marginTop: 8 },
+  progressLabel: { fontSize: 12, fontFamily: "Inter_500Medium", color: "rgba(255,255,255,0.8)" },
+  progressBg: { height: 5, borderRadius: 3, backgroundColor: "rgba(255,255,255,0.25)", marginTop: 6, overflow: "hidden" },
   progressFill: { height: "100%", borderRadius: 3 },
-  progressCount: { fontSize: 13, fontFamily: "Inter_600SemiBold" },
-  completeContainer: { flex: 1, paddingHorizontal: 20, justifyContent: "center", gap: 20 },
-  completeCard: { borderRadius: 24, padding: 28, alignItems: "center", gap: 12, shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.08, shadowRadius: 16, elevation: 5 },
-  completeMedal: { width: 80, height: 80, borderRadius: 24, alignItems: "center", justifyContent: "center", marginBottom: 4 },
-  modeBadge: { flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20 },
-  modeBadgeText: { fontSize: 12, fontFamily: "Inter_600SemiBold" },
-  completeTitle: { fontSize: 26, fontFamily: "Inter_700Bold" },
+  // Scrollable content pads
+  introPad: { paddingHorizontal: 20, paddingTop: 20 },
+  exercisePad: { paddingHorizontal: 20, paddingTop: 20 },
+  completePad: { paddingHorizontal: 20, paddingTop: 24 },
+  // Intro
+  sectionLabel: { fontSize: 11, fontFamily: "Inter_700Bold", letterSpacing: 1, marginBottom: 8, marginTop: 4 },
+  box: { borderRadius: 12, borderWidth: 1, padding: 16, marginBottom: 20 },
+  explanationText: { fontSize: 15, fontFamily: "Inter_400Regular", lineHeight: 24 },
+  exCard: { borderRadius: 10, borderWidth: 1, padding: 14, marginBottom: 8, gap: 3 },
+  polishEx: { fontSize: 15, fontFamily: "Inter_600SemiBold" },
+  englishEx: { fontSize: 13, fontFamily: "Inter_400Regular", fontStyle: "italic" },
+  modeGrid: { flexDirection: "row", gap: 10, marginBottom: 8 },
+  modeCard: { flex: 1, borderRadius: 12, borderWidth: 1.5, padding: 16, alignItems: "center", gap: 8 },
+  modeIcon: { width: 44, height: 44, borderRadius: 12, alignItems: "center", justifyContent: "center" },
+  modeLabel: { fontSize: 13, fontFamily: "Inter_700Bold" },
+  modeCount: { fontSize: 12, fontFamily: "Inter_600SemiBold" },
+  // Complete
+  completeCard: { borderRadius: 16, borderWidth: 1, padding: 28, alignItems: "center", gap: 12, marginBottom: 20 },
+  medal: { width: 80, height: 80, borderRadius: 24, alignItems: "center", justifyContent: "center", marginBottom: 4 },
+  completeTitle: { fontSize: 24, fontFamily: "Inter_700Bold" },
   lessonName: { fontSize: 14, fontFamily: "Inter_400Regular" },
   statsRow: { flexDirection: "row", alignItems: "center", paddingTop: 16 },
   stat: { flex: 1, alignItems: "center", gap: 4 },
   statNum: { fontSize: 22, fontFamily: "Inter_700Bold" },
   statLab: { fontSize: 11, fontFamily: "Inter_500Medium" },
-  statDivider: { width: 1, height: 36 },
+  statDiv: { width: 1, height: 36 },
   mistakeHint: { fontSize: 12, fontFamily: "Inter_400Regular", textAlign: "center", marginTop: 4 },
   completeBtns: { flexDirection: "row", gap: 12 },
-  outlineBtn: { flex: 1, borderRadius: 14, borderWidth: 1.5, padding: 14, alignItems: "center" },
+  outlineBtn: { flex: 1, borderRadius: 12, borderWidth: 1.5, padding: 14, alignItems: "center" },
   outlineBtnText: { fontSize: 14, fontFamily: "Inter_600SemiBold" },
-  solidBtn: { flex: 1, borderRadius: 14, padding: 14, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6 },
+  solidBtn: { flex: 1, borderRadius: 12, padding: 14, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6 },
   solidBtnText: { fontSize: 14, fontFamily: "Inter_600SemiBold", color: "#fff" },
 });

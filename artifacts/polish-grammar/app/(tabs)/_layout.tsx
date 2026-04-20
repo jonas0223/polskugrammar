@@ -47,7 +47,7 @@ function ClassicTabLayout() {
         headerShown: false,
         tabBarStyle: {
           position: "absolute",
-          backgroundColor: isIOS ? "transparent" : colors.background,
+          backgroundColor: isIOS ? "transparent" : "#ffffff",
           borderTopWidth: 1,
           borderTopColor: colors.border,
           elevation: 0,
