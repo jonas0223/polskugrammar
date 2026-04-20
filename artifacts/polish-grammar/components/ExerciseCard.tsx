@@ -429,8 +429,8 @@ export function ExerciseCard({ exercise, onAnswer }: ExerciseCardProps) {
 
   return (
     <View style={styles.wrapper}>
-      {/* Question card - light yellow */}
-      <View style={[styles.questionCard, { backgroundColor: colors.highlight, borderColor: "#f0d98c" }]}>
+      {/* Question card */}
+      <View style={[styles.questionCard, { backgroundColor: colors.muted, borderColor: colors.border }]}>
         <Text style={[styles.question, { color: colors.foreground }]}>{exercise.question}</Text>
         {exercise.hint && (
           <Text style={[styles.hint, { color: colors.mutedForeground }]}>💡 {exercise.hint}</Text>
