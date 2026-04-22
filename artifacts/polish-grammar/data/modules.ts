@@ -11,6 +11,12 @@ import { adjectiveAgreementExercises } from "./exercises/adjective_agreement";
 import { prepositionsExercises } from "./exercises/prepositions";
 import { pastTenseExercises } from "./exercises/past_tense";
 import { everydayPhrasesExercises } from "./exercises/everyday_phrases";
+import { genitiveCaseExercises } from "./exercises/genitive_case";
+import { dativeCaseExercises } from "./exercises/dative_case";
+import { instrumentalCaseExercises } from "./exercises/instrumental_case";
+import { locativeCaseExercises } from "./exercises/locative_case";
+import { verbAspectExercises } from "./exercises/verb_aspect";
+import { futureTenseExercises } from "./exercises/future_tense";
 
 export type ExerciseType =
   | "multiple_choice"
@@ -1389,6 +1395,601 @@ export const MODULES: Module[] = [
             explanation: "'Dziękuję' takes the dative case: 'ci' (you, dative), not 'cię' (you, accusative/genitive).",
           },
           ...everydayPhrasesExercises,
+        ],
+      },
+    ],
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 13. DOPEŁNIACZ — GENITIVE CASE
+  // ─────────────────────────────────────────────────────────────
+  {
+    id: "genitive_case",
+    title: "Dopełniacz",
+    subtitle: "Genitive case — possession & negation",
+    icon: "minus-circle",
+    color: "#0891b2",
+    level: "A2",
+    lessons: [
+      {
+        id: "gen_intro",
+        title: "The Genitive Case",
+        explanation:
+          "The genitive case (dopełniacz) is used after negation (nie mam, nie ma), after quantity words (dużo, mało, trochę), after prepositions (do, z, od, dla, bez), and to show possession. Masculine inanimate nouns take -u, masculine animate and neuter take -a, feminine -a nouns change to -y/-i.",
+        examples: [
+          { polish: "Nie mam czasu.", english: "I don't have time. (after negation)" },
+          { polish: "Idę do sklepu.", english: "I'm going to the store. (after 'do')" },
+          { polish: "Szukam klucza.", english: "I'm looking for the key. (after szukać)" },
+          { polish: "Dużo wody.", english: "A lot of water. (quantity expression)" },
+          { polish: "Bez pieniędzy.", english: "Without money. (after 'bez')" },
+          { polish: "Książka nauczyciela.", english: "The teacher's book. (possession)" },
+        ],
+        exercises: [
+          {
+            id: "gen_mc1",
+            type: "multiple_choice",
+            question: "Which sentence uses genitive correctly after negation?",
+            options: ["Nie mam czas.", "Nie mam czasu.", "Nie mam czasem.", "Nie mam czasie."],
+            correctAnswer: "Nie mam czasu.",
+            explanation: "After negation + mam, direct object moves to genitive: czas → czasu.",
+          },
+          {
+            id: "gen_mc2",
+            type: "multiple_choice",
+            question: "Genitive of 'kawa' (coffee, fem.)?",
+            options: ["kawę", "kawą", "kawy", "kawie"],
+            correctAnswer: "kawy",
+            explanation: "Feminine -a nouns: -a → -y in genitive. kawa → kawy.",
+          },
+          {
+            id: "gen_mc3",
+            type: "multiple_choice",
+            question: "Complete: 'Idę do ___ (szkoła).'",
+            options: ["szkoła", "szkole", "szkoły", "szkołą"],
+            correctAnswer: "szkoły",
+            explanation: "'Do' + genitive: szkoła → szkoły.",
+          },
+          {
+            id: "gen_fb1",
+            type: "fill_blank",
+            question: "Complete with genitive of 'dom' (house, masc. inanimate):",
+            sentence: "Nie ma ___ tutaj.",
+            blanks: ["domu"],
+            explanation: "dom → domu (genitive inanimate masc.). Nie ma domu = There is no house.",
+          },
+          {
+            id: "gen_mc4",
+            type: "multiple_choice",
+            question: "Which verb always takes genitive for its object?",
+            options: ["widzieć (to see)", "szukać (to look for)", "lubić (to like)", "mieć (to have)"],
+            correctAnswer: "szukać (to look for)",
+            explanation: "Szukać, słuchać, potrzebować, uczyć się all take genitive objects.",
+          },
+          {
+            id: "gen_mc5",
+            type: "multiple_choice",
+            question: "Complete: 'Dużo ___ (woda).'",
+            options: ["wodę", "wodą", "wody", "wodzie"],
+            correctAnswer: "wody",
+            explanation: "Quantity words + genitive: woda → wody.",
+          },
+          {
+            id: "gen_sb1",
+            type: "sentence_builder",
+            question: "Build: 'I don't have a key.'",
+            words: ["Nie", "mam", "klucza", "."],
+            correctOrder: ["Nie", "mam", "klucza", "."],
+          },
+          {
+            id: "gen_match1",
+            type: "matching",
+            question: "Match each noun to its genitive form.",
+            pairs: [
+              { left: "kawa", right: "kawy" },
+              { left: "brat", right: "brata" },
+              { left: "miasto", right: "miasta" },
+              { left: "dom", right: "domu" },
+            ],
+          },
+          {
+            id: "gen_ec1",
+            type: "error_correction",
+            question: "Correct the case after 'do':",
+            wrongSentence: "Idę do sklep.",
+            correctedSentence: "Idę do sklepu.",
+            explanation: "'Do' always takes genitive: sklep → sklepu.",
+          },
+          ...genitiveCaseExercises,
+        ],
+      },
+    ],
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 14. CELOWNIK — DATIVE CASE
+  // ─────────────────────────────────────────────────────────────
+  {
+    id: "dative_case",
+    title: "Celownik",
+    subtitle: "Dative case — the recipient",
+    icon: "send",
+    color: "#d97706",
+    level: "A2",
+    lessons: [
+      {
+        id: "dat_intro",
+        title: "The Dative Case",
+        explanation:
+          "The dative case (celownik) marks the indirect object — the recipient of an action. It answers 'to whom?' or 'for whom?'. Masculine nouns take -owi, feminine -a nouns change to -ie/-e, neuter takes -u. It is used with verbs like dawać (to give), pomagać (to help), dziękować (to thank), and with 'podobać się' (to like/please).",
+        examples: [
+          { polish: "Daję mamie prezent.", english: "I give mum a present." },
+          { polish: "Pomagam bratu.", english: "I help my brother." },
+          { polish: "Dziękuję ci.", english: "I thank you." },
+          { polish: "To mi się podoba.", english: "I like it. (lit: it pleases me)" },
+          { polish: "Dzięki tobie.", english: "Thanks to you." },
+        ],
+        exercises: [
+          {
+            id: "dat_mc1",
+            type: "multiple_choice",
+            question: "Dative of 'mama' (mum, fem.)?",
+            options: ["mamę", "mamą", "mamie", "mamy"],
+            correctAnswer: "mamie",
+            explanation: "Feminine -a nouns: -a → -ie in dative. mama → mamie.",
+          },
+          {
+            id: "dat_mc2",
+            type: "multiple_choice",
+            question: "Dative of 'brat' (brother, masc.)?",
+            options: ["brata", "bratu", "bracie", "bratowi"],
+            correctAnswer: "bratowi",
+            explanation: "Masculine nouns take -owi in dative: brat → bratowi.",
+          },
+          {
+            id: "dat_fb1",
+            type: "fill_blank",
+            question: "Complete: 'Daję ___ (siostra) kwiatek.'",
+            sentence: "Daję ___ kwiatek.",
+            blanks: ["siostrze"],
+            explanation: "siostra → siostrze (dative). Daję siostrze kwiatek.",
+          },
+          {
+            id: "dat_mc3",
+            type: "multiple_choice",
+            question: "Which verb takes a dative recipient?",
+            options: ["czytać (to read)", "widzieć (to see)", "pomagać (to help)", "lubić (to like)"],
+            correctAnswer: "pomagać (to help)",
+            explanation: "Pomagać + dative: pomagam mamie (I help mum).",
+          },
+          {
+            id: "dat_mc4",
+            type: "multiple_choice",
+            question: "Dative of 'on' (he)?",
+            options: ["jego", "go", "mu", "nim"],
+            correctAnswer: "mu",
+            explanation: "Dative of 'on' = mu (short form) or jemu (long form).",
+          },
+          {
+            id: "dat_mc5",
+            type: "multiple_choice",
+            question: "Dative of 'ja' (I)?",
+            options: ["mnie", "mną", "mi", "moje"],
+            correctAnswer: "mi",
+            explanation: "Dative of 'ja' = mi (short form) or mnie (long form). Daj mi = give me.",
+          },
+          {
+            id: "dat_sb1",
+            type: "sentence_builder",
+            question: "Build: 'I help my sister.'",
+            words: ["Pomagam", "siostrze", "."],
+            correctOrder: ["Pomagam", "siostrze", "."],
+          },
+          {
+            id: "dat_match1",
+            type: "matching",
+            question: "Match each pronoun to its dative form.",
+            pairs: [
+              { left: "ja", right: "mi / mnie" },
+              { left: "ty", right: "ci / tobie" },
+              { left: "on", right: "mu / jemu" },
+              { left: "ona", right: "jej" },
+              { left: "my", right: "nam" },
+            ],
+          },
+          {
+            id: "dat_ec1",
+            type: "error_correction",
+            question: "Correct the dative:",
+            wrongSentence: "Daję mama kwiaty.",
+            correctedSentence: "Daję mamie kwiaty.",
+            explanation: "mama → mamie (dative). The recipient 'mama' must be in dative.",
+          },
+          ...dativeCaseExercises,
+        ],
+      },
+    ],
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 15. NARZĘDNIK — INSTRUMENTAL CASE
+  // ─────────────────────────────────────────────────────────────
+  {
+    id: "instrumental_case",
+    title: "Narzędnik",
+    subtitle: "Instrumental — professions & tools",
+    icon: "tool",
+    color: "#9333ea",
+    level: "A2",
+    lessons: [
+      {
+        id: "ins_intro",
+        title: "The Instrumental Case",
+        explanation:
+          "The instrumental case (narzędnik) is used after 'być' (to be) for professions and identities, to express the means or tool of an action, and with the preposition 'z' (with, together with). Masculine and neuter nouns take -em/-iem, feminine nouns take -ą.",
+        examples: [
+          { polish: "Jestem studentem.", english: "I am a student. (profession after być)" },
+          { polish: "Ona jest lekarką.", english: "She is a doctor." },
+          { polish: "Jadę autobusem.", english: "I travel by bus. (means of transport)" },
+          { polish: "Piszę długopisem.", english: "I write with a pen. (tool)" },
+          { polish: "Idę z przyjacielem.", english: "I'm going with a friend." },
+        ],
+        exercises: [
+          {
+            id: "ins_mc1",
+            type: "multiple_choice",
+            question: "Instrumental of 'student' (masc.)?",
+            options: ["studenta", "studentowi", "studentem", "studencie"],
+            correctAnswer: "studentem",
+            explanation: "Masculine nouns take -em in instrumental: student → studentem.",
+          },
+          {
+            id: "ins_mc2",
+            type: "multiple_choice",
+            question: "Complete: 'Jestem ___ (lekarz).'",
+            options: ["lekarza", "lekarzowi", "lekarzem", "lekarzu"],
+            correctAnswer: "lekarzem",
+            explanation: "Profession after być → instrumental: lekarz → lekarzem.",
+          },
+          {
+            id: "ins_fb1",
+            type: "fill_blank",
+            question: "Complete: 'Jadę ___ (autobus).'",
+            sentence: "Jadę ___.",
+            blanks: ["autobusem"],
+            explanation: "Mode of transport → instrumental: autobus → autobusem.",
+          },
+          {
+            id: "ins_mc3",
+            type: "multiple_choice",
+            question: "Instrumental of 'kobieta' (woman, fem.)?",
+            options: ["kobietę", "kobiety", "kobietą", "kobiecie"],
+            correctAnswer: "kobietą",
+            explanation: "Feminine nouns take -ą: kobieta → kobietą.",
+          },
+          {
+            id: "ins_mc4",
+            type: "multiple_choice",
+            question: "Complete: 'Idę z ___ (przyjaciel, masc.).'",
+            options: ["przyjaciela", "przyjacielowi", "przyjacielem", "przyjacielu"],
+            correctAnswer: "przyjacielem",
+            explanation: "'Z' (together with) + instrumental: przyjaciel → przyjacielem.",
+          },
+          {
+            id: "ins_sb1",
+            type: "sentence_builder",
+            question: "Build: 'She is a teacher.' (fem.)",
+            words: ["Ona", "jest", "nauczycielką", "."],
+            correctOrder: ["Ona", "jest", "nauczycielką", "."],
+          },
+          {
+            id: "ins_match1",
+            type: "matching",
+            question: "Match each noun to its instrumental form.",
+            pairs: [
+              { left: "student", right: "studentem" },
+              { left: "kobieta", right: "kobietą" },
+              { left: "dziecko", right: "dzieckiem" },
+              { left: "autobus", right: "autobusem" },
+            ],
+          },
+          {
+            id: "ins_ec1",
+            type: "error_correction",
+            question: "Correct: profession after 'być':",
+            wrongSentence: "Jestem lekarz.",
+            correctedSentence: "Jestem lekarzem.",
+            explanation: "After być, professions take instrumental: lekarz → lekarzem.",
+          },
+          ...instrumentalCaseExercises,
+        ],
+      },
+    ],
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 16. MIEJSCOWNIK — LOCATIVE CASE
+  // ─────────────────────────────────────────────────────────────
+  {
+    id: "locative_case",
+    title: "Miejscownik",
+    subtitle: "Locative — location & about",
+    icon: "map-pin",
+    color: "#0f766e",
+    level: "A2",
+    lessons: [
+      {
+        id: "loc_intro",
+        title: "The Locative Case",
+        explanation:
+          "The locative case (miejscownik) is always used with a preposition — never alone. The most common prepositions are: w (in), na (on/at), o (about), przy (by), and po (after/around). Masculine nouns usually take -ie/-u, feminine -a nouns change to -ie/-e, neuter nouns take -ie/-u.",
+        examples: [
+          { polish: "Mieszkam w Warszawie.", english: "I live in Warsaw. (w + locative)" },
+          { polish: "Siedzę na kanapie.", english: "I'm sitting on the sofa." },
+          { polish: "Mówię o filmie.", english: "I'm talking about the film." },
+          { polish: "Pracuję w biurze.", english: "I work in an office." },
+          { polish: "Stoję przy oknie.", english: "I'm standing by the window." },
+        ],
+        exercises: [
+          {
+            id: "loc_mc1",
+            type: "multiple_choice",
+            question: "Locative of 'Warszawa' (Warsaw, fem.)?",
+            options: ["Warszawy", "Warszawę", "Warszawie", "Warszawą"],
+            correctAnswer: "Warszawie",
+            explanation: "Feminine -a nouns: -a → -ie in locative. Warszawa → Warszawie.",
+          },
+          {
+            id: "loc_mc2",
+            type: "multiple_choice",
+            question: "Complete: 'Mieszkam w ___ (Polska).'",
+            options: ["Polskę", "Polski", "Polsce", "Polską"],
+            correctAnswer: "Polsce",
+            explanation: "'W' + locative: Polska → Polsce.",
+          },
+          {
+            id: "loc_fb1",
+            type: "fill_blank",
+            question: "Complete: 'Jestem w ___ (dom).'",
+            sentence: "Jestem w ___.",
+            blanks: ["domu"],
+            explanation: "dom → domu (locative masc.). w domu = at home.",
+          },
+          {
+            id: "loc_mc3",
+            type: "multiple_choice",
+            question: "Complete: 'Mówię o ___ (film).'",
+            options: ["filma", "filmowi", "filmie", "filmem"],
+            correctAnswer: "filmie",
+            explanation: "'O' (about) + locative: film → filmie.",
+          },
+          {
+            id: "loc_mc4",
+            type: "multiple_choice",
+            question: "Locative of 'miasto' (city, neuter)?",
+            options: ["miastem", "miast", "mieście", "miastu"],
+            correctAnswer: "mieście",
+            explanation: "miasto → mieście (locative neuter).",
+          },
+          {
+            id: "loc_sb1",
+            type: "sentence_builder",
+            question: "Build: 'I live in Poland.'",
+            words: ["Mieszkam", "w", "Polsce", "."],
+            correctOrder: ["Mieszkam", "w", "Polsce", "."],
+          },
+          {
+            id: "loc_match1",
+            type: "matching",
+            question: "Match each noun to its locative form.",
+            pairs: [
+              { left: "dom", right: "domu" },
+              { left: "szkoła", right: "szkole" },
+              { left: "miasto", right: "mieście" },
+              { left: "Polska", right: "Polsce" },
+            ],
+          },
+          {
+            id: "loc_ec1",
+            type: "error_correction",
+            question: "Correct the locative:",
+            wrongSentence: "Mieszkam w Polska.",
+            correctedSentence: "Mieszkam w Polsce.",
+            explanation: "'W' + locative: Polska → Polsce.",
+          },
+          ...locativeCaseExercises,
+        ],
+      },
+    ],
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 17. ASPEKT CZASOWNIKA — VERB ASPECT
+  // ─────────────────────────────────────────────────────────────
+  {
+    id: "verb_aspect",
+    title: "Aspekt Czasownika",
+    subtitle: "Perfective vs imperfective",
+    icon: "refresh-cw",
+    color: "#e11d48",
+    level: "A2",
+    lessons: [
+      {
+        id: "asp_intro",
+        title: "Dokonany i Niedokonany",
+        explanation:
+          "Polish verbs come in pairs: imperfective (niedokonany) for ongoing, repeated, or habitual actions, and perfective (dokonany) for completed, one-time actions where the result matters. The perfective is formed by adding a prefix (na-, z-, po-, prze-...) or by changing the verb stem. Perfective verbs cannot be used in the present tense — their present-tense conjugation is actually simple future.",
+        examples: [
+          { polish: "Pisałem list (imperf.) — I was writing a letter.", english: "Ongoing past action." },
+          { polish: "Napisałem list (perf.) — I wrote/finished the letter.", english: "Completed past action." },
+          { polish: "Codziennie czytam (imperf.) — I read every day.", english: "Habitual/repeated action." },
+          { polish: "Przeczytam to jutro (perf.) — I will read/finish this tomorrow.", english: "Completed future action." },
+          { polish: "pisać → napisać", english: "imperfective → perfective pair." },
+        ],
+        exercises: [
+          {
+            id: "asp_mc1",
+            type: "multiple_choice",
+            question: "'Codziennie piję kawę.' — Which aspect is 'piję'?",
+            options: ["Perfective", "Imperfective"],
+            correctAnswer: "Imperfective",
+            explanation: "Habitual daily action → imperfective: piję (not wypiję).",
+          },
+          {
+            id: "asp_mc2",
+            type: "multiple_choice",
+            question: "Perfective partner of 'pisać'?",
+            options: ["piszę", "pisywać", "napisać", "odpisać"],
+            correctAnswer: "napisać",
+            explanation: "pisać (imperf.) ↔ napisać (perf.).",
+          },
+          {
+            id: "asp_mc3",
+            type: "multiple_choice",
+            question: "Which sentence means 'She finished reading the book'?",
+            options: ["Ona czytała książkę.", "Ona przeczytała książkę.", "Ona czyta książkę.", "Ona będzie czytać."],
+            correctAnswer: "Ona przeczytała książkę.",
+            explanation: "Przeczytała = perfective past = finished reading the book.",
+          },
+          {
+            id: "asp_fb1",
+            type: "fill_blank",
+            question: "Fill in the perfective partner of 'robić' (to do/make):",
+            sentence: "robić ↔ ___",
+            blanks: ["zrobić"],
+            explanation: "robić (imperf.) ↔ zrobić (perf.).",
+          },
+          {
+            id: "asp_mc4",
+            type: "multiple_choice",
+            question: "Which sentence is about a completed, one-time past action?",
+            options: ["Jadłem obiad przez godzinę.", "Zjadłem obiad.", "Będę jeść obiad.", "Jem obiad."],
+            correctAnswer: "Zjadłem obiad.",
+            explanation: "Zjadłem = perfective past = I finished eating dinner.",
+          },
+          {
+            id: "asp_match1",
+            type: "matching",
+            question: "Match imperfective to perfective partner.",
+            pairs: [
+              { left: "pisać", right: "napisać" },
+              { left: "czytać", right: "przeczytać" },
+              { left: "robić", right: "zrobić" },
+              { left: "jeść", right: "zjeść" },
+              { left: "kupować", right: "kupić" },
+            ],
+          },
+          {
+            id: "asp_sb1",
+            type: "sentence_builder",
+            question: "Build: 'I finished reading the book.'",
+            words: ["Przeczytałem", "tę", "książkę", "."],
+            correctOrder: ["Przeczytałem", "tę", "książkę", "."],
+          },
+          {
+            id: "asp_ec1",
+            type: "error_correction",
+            question: "Fix: habitual action should be imperfective:",
+            wrongSentence: "Codziennie zjadałem śniadanie.",
+            correctedSentence: "Codziennie jadłem śniadanie.",
+            explanation: "Habitual/repeated daily action → imperfective: jadłem.",
+          },
+          ...verbAspectExercises,
+        ],
+      },
+    ],
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 18. CZAS PRZYSZŁY — FUTURE TENSE
+  // ─────────────────────────────────────────────────────────────
+  {
+    id: "future_tense",
+    title: "Czas Przyszły",
+    subtitle: "Simple & compound future",
+    icon: "arrow-right-circle",
+    color: "#2563eb",
+    level: "A2",
+    lessons: [
+      {
+        id: "fut_intro",
+        title: "Talking About the Future",
+        explanation:
+          "Polish has two future forms: the simple future (using perfective verbs conjugated like the present: napiszę, zrobię, pójdę) and the compound future (będę + infinitive or past form, using imperfective verbs: będę pisał/pisać, będziemy czytać). Simple future = one completed action; compound future = ongoing/repeated future.",
+        examples: [
+          { polish: "Napiszę list jutro.", english: "I will write (and finish) the letter tomorrow." },
+          { polish: "Będę pisać przez godzinę.", english: "I will be writing for an hour." },
+          { polish: "Zrobię to za chwilę.", english: "I'll do it in a moment." },
+          { polish: "Będziemy uczyć się wieczorem.", english: "We'll be studying this evening." },
+          { polish: "Jutro pójdę do sklepu.", english: "Tomorrow I'll go to the store." },
+        ],
+        exercises: [
+          {
+            id: "fut_mc1",
+            type: "multiple_choice",
+            question: "What does 'napiszę' mean?",
+            options: ["I was writing", "I will write (and finish)", "I write", "I am writing"],
+            correctAnswer: "I will write (and finish)",
+            explanation: "Napiszę = 1st person future of napisać (perf.). Simple completed future.",
+          },
+          {
+            id: "fut_mc2",
+            type: "multiple_choice",
+            question: "Which is the simple future of 'zrobić' for 'I'?",
+            options: ["robię", "zrobiłem", "zrobię", "będę robił"],
+            correctAnswer: "zrobię",
+            explanation: "Perfective zrobić → zrobię (1st person simple future).",
+          },
+          {
+            id: "fut_fb1",
+            type: "fill_blank",
+            question: "Fill in the compound future: 'She will be cooking.' (gotować – imperf.)",
+            sentence: "Ona ___ gotować.",
+            blanks: ["będzie"],
+            explanation: "Compound future (ongoing): będzie + infinitive.",
+          },
+          {
+            id: "fut_mc3",
+            type: "multiple_choice",
+            question: "Future of 'być' for 'I'?",
+            options: ["jestem", "byłem", "będę", "będzie"],
+            correctAnswer: "będę",
+            explanation: "będę (I will be), będziesz, będzie, będziemy, będziecie, będą.",
+          },
+          {
+            id: "fut_mc4",
+            type: "multiple_choice",
+            question: "Complete: 'Jutro ___ do Krakowa.' (pójść – perf., I)",
+            options: ["idę", "szedłem", "pójdę", "będę iść"],
+            correctAnswer: "pójdę",
+            explanation: "pójść (perf.) → pójdę = simple future (one planned trip).",
+          },
+          {
+            id: "fut_sb1",
+            type: "sentence_builder",
+            question: "Build: 'Tomorrow I will go to school.'",
+            words: ["Jutro", "pójdę", "do", "szkoły", "."],
+            correctOrder: ["Jutro", "pójdę", "do", "szkoły", "."],
+          },
+          {
+            id: "fut_match1",
+            type: "matching",
+            question: "Match the infinitive to its 1st person simple future.",
+            pairs: [
+              { left: "napisać", right: "napiszę" },
+              { left: "zrobić", right: "zrobię" },
+              { left: "kupić", right: "kupię" },
+              { left: "pójść", right: "pójdę" },
+            ],
+          },
+          {
+            id: "fut_ec1",
+            type: "error_correction",
+            question: "Fix: completed future needs perfective:",
+            wrongSentence: "Jutro będę iść do sklepu. (one planned trip)",
+            correctedSentence: "Jutro pójdę do sklepu.",
+            explanation: "For a one-time planned action, use perfective future: pójdę.",
+          },
+          ...futureTenseExercises,
         ],
       },
     ],

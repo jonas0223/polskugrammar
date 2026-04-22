@@ -1,0 +1,58 @@
+import type { Exercise } from "../modules";
+
+export const genitiveCaseExercises: Exercise[] = [
+  { id: "gen_mc_001", type: "multiple_choice", question: "Genitive of 'kawa' (coffee, fem.)?", options: ["kawę", "kawą", "kawy", "kawie"], correctAnswer: "kawy", explanation: "Feminine -a nouns: -a → -y in genitive. kawa → kawy." },
+  { id: "gen_mc_002", type: "multiple_choice", question: "Genitive of 'dom' (house, inanimate masc.)?", options: ["doma", "domu", "domem", "domie"], correctAnswer: "domu", explanation: "Most inanimate masculine nouns take -u in genitive: dom → domu." },
+  { id: "gen_mc_003", type: "multiple_choice", question: "Genitive of 'brat' (brother, animate masc.)?", options: ["brata", "bratem", "bratu", "bracie"], correctAnswer: "brata", explanation: "Animate masculine nouns take -a in genitive: brat → brata." },
+  { id: "gen_mc_004", type: "multiple_choice", question: "Genitive of 'miasto' (city, neuter)?", options: ["miastu", "miastem", "miasta", "mieście"], correctAnswer: "miasta", explanation: "Neuter nouns: -o/-e → -a in genitive. miasto → miasta." },
+  { id: "gen_mc_005", type: "multiple_choice", question: "Which sentence uses the genitive correctly after negation?", options: ["Nie mam czas.", "Nie mam czasu.", "Nie mam czasem.", "Nie mam czasie."], correctAnswer: "Nie mam czasu.", explanation: "After negation (nie), the direct object changes to genitive: czas → czasu." },
+  { id: "gen_mc_006", type: "multiple_choice", question: "Complete: 'Idę do ___.' (I'm going to the store – sklep, inan. masc.)", options: ["sklep", "sklepy", "sklepu", "sklepem"], correctAnswer: "sklepu", explanation: "Preposition 'do' (to/of) always takes genitive: sklep → sklepu." },
+  { id: "gen_mc_007", type: "multiple_choice", question: "Complete: 'Szukam ___.' (I'm looking for a friend – kolega, animate masc.)", options: ["kolega", "kolegi", "kolegę", "kolegą"], correctAnswer: "kolegi", explanation: "Szukać (to look for) takes genitive. Masc. animate kolega → kolegi." },
+  { id: "gen_mc_008", type: "multiple_choice", question: "Genitive of 'herbata' (tea, fem.)?", options: ["herbacie", "herbatę", "herbatą", "herbaty"], correctAnswer: "herbaty", explanation: "herbata → herbaty (gen. fem.)." },
+  { id: "gen_mc_009", type: "multiple_choice", question: "Complete: 'Nie lubię ___.' (I don't like winter – zima, fem.)", options: ["zimę", "zima", "zimy", "zimą"], correctAnswer: "zimy", explanation: "After negation, direct object goes to genitive: zima → zimy." },
+  { id: "gen_mc_010", type: "multiple_choice", question: "Complete: 'Nie ma ___.' (There is no bread – chleb, inan. masc.)", options: ["chleb", "chlebem", "chleba", "chlebie"], correctAnswer: "chleba", explanation: "'Nie ma' (there is no) takes genitive. Masc. chleb → chleba." },
+  { id: "gen_mc_011", type: "multiple_choice", question: "Complete: 'Dużo ___.' (a lot of water – woda, fem.)", options: ["wodę", "wody", "wodą", "wodzie"], correctAnswer: "wody", explanation: "Quantity words (dużo, mało, trochę) take genitive: woda → wody." },
+  { id: "gen_mc_012", type: "multiple_choice", question: "Complete: 'Bez ___.' (without money – pieniądze, pl.)", options: ["pieniądze", "pieniędzy", "pieniędzom", "pieniędzami"], correctAnswer: "pieniędzy", explanation: "'Bez' (without) takes genitive. Pieniądze → pieniędzy (gen. pl.)." },
+  { id: "gen_mc_013", type: "multiple_choice", question: "Genitive of 'siostra' (sister, fem.)?", options: ["siostry", "siostrze", "siostrę", "siostrą"], correctAnswer: "siostry", explanation: "siostra → siostry (gen. fem.)." },
+  { id: "gen_mc_014", type: "multiple_choice", question: "Genitive of 'okno' (window, neuter)?", options: ["oknu", "oknem", "okna", "oknie"], correctAnswer: "okna", explanation: "okno → okna (gen. neut.)." },
+  { id: "gen_mc_015", type: "multiple_choice", question: "Complete: 'Słucham ___.' (I'm listening to music – muzyka, fem.)", options: ["muzykę", "muzyką", "muzyki", "muzyce"], correctAnswer: "muzyki", explanation: "Słuchać (to listen to) takes genitive: muzyka → muzyki." },
+  { id: "gen_mc_016", type: "multiple_choice", question: "Complete: 'To jest książka ___.' (This is the teacher's book – nauczyciel, animate masc.)", options: ["nauczyciel", "nauczyciela", "nauczycielowi", "nauczycielem"], correctAnswer: "nauczyciela", explanation: "Possession uses genitive: 'of the teacher' = nauczyciela." },
+  { id: "gen_mc_017", type: "multiple_choice", question: "Complete: 'Potrzebuję ___.' (I need help – pomoc, fem.)", options: ["pomoc", "pomocy", "pomocy", "pomocą"], correctAnswer: "pomocy", explanation: "Potrzebować (to need) takes genitive: pomoc → pomocy." },
+  { id: "gen_mc_018", type: "multiple_choice", question: "Which preposition ALWAYS takes genitive?", options: ["w", "na", "do", "przy"], correctAnswer: "do", explanation: "'Do' (to/into) always takes genitive: do domu, do sklepu, do Polski." },
+  { id: "gen_mc_019", type: "multiple_choice", question: "Genitive of 'Polska' (Poland, fem.)?", options: ["Polską", "Polsce", "Polskę", "Polski"], correctAnswer: "Polski", explanation: "Polska → Polski (gen. fem. -ka → -ki)." },
+  { id: "gen_mc_020", type: "multiple_choice", question: "Genitive of 'pies' (dog, animate masc.)?", options: ["psa", "psem", "psu", "pcie"], correctAnswer: "psa", explanation: "Animate masculine pies → psa (gen.). Note: same as accusative." },
+  { id: "gen_mc_021", type: "multiple_choice", question: "Complete: 'Od ___.' (from the teacher – nauczycielka, fem.)", options: ["nauczycielkę", "nauczycielką", "nauczycielki", "nauczycielce"], correctAnswer: "nauczycielki", explanation: "'Od' (from) takes genitive: nauczycielka → nauczycielki." },
+  { id: "gen_mc_022", type: "multiple_choice", question: "Complete: 'Dla ___.' (for my mother – mama, fem.)", options: ["mamę", "mamą", "mamy", "mamie"], correctAnswer: "mamy", explanation: "'Dla' (for) takes genitive: mama → mamy." },
+  { id: "gen_mc_023", type: "multiple_choice", question: "Complete: 'Nie ma ___.' (There is no time – czas, masc.)", options: ["czasu", "czas", "czasie", "czasem"], correctAnswer: "czasu", explanation: "Nie ma + genitive: czas → czasu." },
+  { id: "gen_mc_024", type: "multiple_choice", question: "Genitive plural of 'student' (student, animate masc.)?", options: ["studentowi", "studentem", "studentów", "studentami"], correctAnswer: "studentów", explanation: "Genitive plural of most masculine nouns: -ów. studentów." },
+  { id: "gen_mc_025", type: "multiple_choice", question: "Genitive plural of 'kobieta' (woman, fem.)?", options: ["kobietą", "kobiet", "kobietom", "kobietami"], correctAnswer: "kobiet", explanation: "Genitive plural of -a feminine nouns is often zero-ending: kobiet." },
+
+  { id: "gen_fb_001", type: "fill_blank", question: "Fill in the genitive: 'Nie mam ___ (brat).'", sentence: "Nie mam ___ brata.", blanks: ["brata"], explanation: "brat (animate masc.) → brata in genitive. After negation: nie mam brata." },
+  { id: "gen_fb_002", type: "fill_blank", question: "Fill in: 'Idę do ___ (szkoła).'", sentence: "Idę do ___.", blanks: ["szkoły"], explanation: "szkoła (fem.) → szkoły. 'Do' + genitive." },
+  { id: "gen_fb_003", type: "fill_blank", question: "Fill in: 'Szukam ___ (klucz, inan. masc.).'", sentence: "Szukam ___.", blanks: ["klucza"], explanation: "Szukać + genitive. klucz (inanimate masc.) → klucza." },
+  { id: "gen_fb_004", type: "fill_blank", question: "Fill in: 'Nie lubię ___ (deszcz, masc.).'", sentence: "Nie lubię ___.", blanks: ["deszczu"], explanation: "After negation, genitive. deszcz → deszczu." },
+  { id: "gen_fb_005", type: "fill_blank", question: "Fill in: 'Trochę ___ (woda).'", sentence: "Trochę ___.", blanks: ["wody"], explanation: "'Trochę' (a little) takes genitive: woda → wody." },
+
+  { id: "gen_match_001", type: "matching", question: "Match each noun to its genitive form.", pairs: [
+    { left: "kawa", right: "kawy" },
+    { left: "brat", right: "brata" },
+    { left: "miasto", right: "miasta" },
+    { left: "Polska", right: "Polski" },
+    { left: "pies", right: "psa" },
+  ]},
+  { id: "gen_match_002", type: "matching", question: "Match each preposition to what case it triggers.", pairs: [
+    { left: "do (to)", right: "Genitive" },
+    { left: "bez (without)", right: "Genitive" },
+    { left: "dla (for)", right: "Genitive" },
+    { left: "od (from)", right: "Genitive" },
+    { left: "z (from/with)", right: "Genitive or Instrumental" },
+  ]},
+
+  { id: "gen_sb_001", type: "sentence_builder", question: "Build: 'I don't have a car.'", words: ["Nie", "mam", "samochodu", "."], correctOrder: ["Nie", "mam", "samochodu", "."] },
+  { id: "gen_sb_002", type: "sentence_builder", question: "Build: 'I'm going to school.'", words: ["Idę", "do", "szkoły", "."], correctOrder: ["Idę", "do", "szkoły", "."] },
+  { id: "gen_sb_003", type: "sentence_builder", question: "Build: 'I'm listening to music.'", words: ["Słucham", "muzyki", "."], correctOrder: ["Słucham", "muzyki", "."] },
+
+  { id: "gen_ec_001", type: "error_correction", question: "Correct the case after 'do':", wrongSentence: "Idę do sklep.", correctedSentence: "Idę do sklepu.", explanation: "'Do' takes genitive: sklep → sklepu." },
+  { id: "gen_ec_002", type: "error_correction", question: "Correct the negated sentence:", wrongSentence: "Nie mam czas.", correctedSentence: "Nie mam czasu.", explanation: "After nie + mam (negation of direct object), use genitive: czas → czasu." },
+  { id: "gen_ec_003", type: "error_correction", question: "Correct the quantity phrase:", wrongSentence: "Dużo woda.", correctedSentence: "Dużo wody.", explanation: "Quantity words take genitive: woda → wody." },
+];
