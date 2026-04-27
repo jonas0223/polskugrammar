@@ -22,7 +22,8 @@
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#054013"
       },
-      "package": "com.polishgrammar.practice"
+      "package": "com.polskugrammar.app",
+      "versionCode": 6
     },
     "web": {
       "favicon": "./assets/images/icon.png"
@@ -40,6 +41,11 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "cc15d636-642a-462e-8703-0844b3c3ccfa"
+      }
     }
   }
 }
